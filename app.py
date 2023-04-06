@@ -203,4 +203,10 @@ if isinstance(streams, list):
                     option = st.selectbox('Select A Commit', (commit_names))
                     if option != "Select a commit":
                         commit = commits[commit_names.index(option)-1]
-                        st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+stream.id+"&commit="+commit.id+"&transparent=false", width=1200,height=800)
+                        st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+
+                                                stream.id+"&commit="
+                                                +commit.id+
+                                                "&transparent=false",
+                                                width=1000,
+                                                height=700)
+
