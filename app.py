@@ -207,6 +207,6 @@ if isinstance(streams, list):
                                                 stream.id+"&commit="
                                                 +commit.id+
                                                 "&transparent=false",
-                                                width=1250,
-                                                height=700)
+                                                width=1200,
+                                                height=750)
 
