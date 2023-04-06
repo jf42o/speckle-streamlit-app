@@ -4,6 +4,8 @@ import random
 import math
 import string
 import streamlit as st
+import pandas as pd
+from utils import ModelParser
 #specklepy libraries
 from specklepy.api.client import SpeckleClient
 from specklepy.api.credentials import get_account_from_token
@@ -21,6 +23,7 @@ from specklepy.transports.server import ServerTransport
 from specklepy.objects.geometry import *
 from specklepy.logging.exceptions import SpeckleException
 from specklepy.objects.other import RenderMaterial
+from specklepy.api import operations
 
 from specklepy.api.client import SpeckleClient
 from specklepy.api.credentials import get_default_account
@@ -91,7 +94,9 @@ header = st.container()
 authenticate = st.container()
 #--------------------------
 
-#--------------------------
+#Authentification#
+
+#----------------------------------------------------------------------------------------------------------#
 
 with header:
     st.title("SpeckleLit")
@@ -166,8 +171,10 @@ if st.session_state['refresh_token']:
             streams = getStreams(client)
         except:
             streams = None
+#--------------------------------------------------------------------------------------------------------------------#
 
-commit_type = "Building"
+#Selection of Streams#
+
 if isinstance(streams, list):
     stream_names = ["Select a stream"]
     for aStream in streams:
@@ -177,18 +184,15 @@ if isinstance(streams, list):
         (stream_names))
     if option != "Select a stream":
         stream = streams[stream_names.index(option)-1]
-
         branches = getBranches([client, stream])
         branch_names = ["Select a branch"]
         for aBranch in branches:
             branch_names.append(aBranch.name)
-
         option = st.selectbox(
             'Select A Branch',
             (branch_names))
         if option != "Select a branch":
             branch = branches[branch_names.index(option)-1]
-            
             commits = getCommits(branch)
             commit_names = ["Select a commit"]
             for aCommit in commits:
@@ -200,6 +204,10 @@ if isinstance(streams, list):
                                         stream.id+"&commit="
                                         +commit.id+
                                         "&transparent=false",
-                                        width=1200,
+                                        width=1250,
                                         height=750)
 
+categories = ["@Wände", "@Geschossdecken"]
+params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
+modeldata = ModelParser.parse_and_update_model(commit.referencedObject, categories, params_to_search)
+dataframe_editable = st.experimental_data_editor(pd.DataFrame(modeldata))
