@@ -69,7 +69,7 @@ def getObject(client, stream, commit):
 #-----------------#
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 
 if LOCAL:
     appID = st.secrets["appIDlocal"]
