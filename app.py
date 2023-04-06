@@ -66,6 +66,17 @@ def getObject(client, stream, commit):
     last_obj_id = commit.referencedObject
     return operations.receive(obj_id=last_obj_id, remote_transport=transport)
 
+#-----------------#
+
+#toggle between local / redirection from speckleserver to app
+LOCAL = True
+
+if LOCAL:
+    appID = st.secrets["appIDlocal"]
+    appSecret = st.secrets["appSecretlocal"]
+else:
+    appID = st.secrets["appID"]
+    appSecret = st.secrets["appSecret"]
 
 #PAGE CONFIG
 st.set_page_config(
@@ -73,7 +84,6 @@ st.set_page_config(
     page_icon="📊",
     layout = "wide"
 )
-
 
 #--------------------------
 #CONTAINERS
@@ -85,10 +95,6 @@ authenticate = st.container()
 
 with header:
     st.title("SpeckleLit")
-
-appID = st.secrets["appID"]
-
-appSecret = st.secrets["appSecret"]
 
 if 'access_code' not in st.session_state:
     st.session_state['access_code'] = None
@@ -122,7 +128,7 @@ if not refresh_token:
     if not access_code:
         # Verify the app with the challenge
         verify_url="https://speckle.xyz/authn/verify/"+appID+"/"+st.secrets["challenge"]
-        st.image("https://speckle.systems/content/images/2021/02/logo_big.png",width=100)
+        st.image("https://speckle.systems/content/images/2021/02/logo_big.png",width=50)
         link = '[Login to Speckle]('+verify_url+')'
         st.subheader(link)
     else:
@@ -160,6 +166,7 @@ if st.session_state['refresh_token']:
             streams = getStreams(client)
         except:
             streams = None
+
 commit_type = "Building"
 if isinstance(streams, list):
     if len(streams) > 0:
@@ -196,4 +203,4 @@ if isinstance(streams, list):
                     option = st.selectbox('Select A Commit', (commit_names))
                     if option != "Select a commit":
                         commit = commits[commit_names.index(option)-1]
-                        st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+stream.id+"&commit="+commit.id+"&transparent=false", width=600,height=400)
+                        st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+stream.id+"&commit="+commit.id+"&transparent=false", width=1200,height=800)
