@@ -47,11 +47,29 @@ def createRandomChallenge(length=0):
         masterlist = random.sample(masterlist, random.randint(64, 128))
     return ''.join(masterlist)
 
-print(createRandomChallenge())
+def getBranches(item):
+	client, stream = item
+	bList = client.branch.list(stream.id)
+	branches = []
+	for b in bList:
+		branches.append(client.branch.get(stream.id, b.name))
+	return branches
+
+def getStreams(client):
+    return client.stream.list()
+
+def getCommits(branch):
+    return branch.commits.items
+
+def getObject(client, stream, commit):
+    transport = ServerTransport(stream.id, client)
+    last_obj_id = commit.referencedObject
+    return operations.receive(obj_id=last_obj_id, remote_transport=transport)
+
 
 #PAGE CONFIG
 st.set_page_config(
-    page_title="Topologic Speckle Test Application",
+    page_title="SpeckleLit",
     page_icon="📊",
     layout = "wide"
 )
