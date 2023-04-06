@@ -169,44 +169,37 @@ if st.session_state['refresh_token']:
 
 commit_type = "Building"
 if isinstance(streams, list):
-    if len(streams) > 0:
-        type_names = ["Select a type", "Building", "Apertures", "Shading"]
+    stream_names = ["Select a stream"]
+    for aStream in streams:
+        stream_names.append(aStream.name)
+    option = st.selectbox(
+        'Select A Stream',
+        (stream_names))
+    if option != "Select a stream":
+        stream = streams[stream_names.index(option)-1]
+
+        branches = getBranches([client, stream])
+        branch_names = ["Select a branch"]
+        for aBranch in branches:
+            branch_names.append(aBranch.name)
+
         option = st.selectbox(
-            'Select A Type',
-            type_names)
-        if option != "Select a type":
-            commit_type = option
-            stream_names = ["Select a stream"]
-            for aStream in streams:
-                stream_names.append(aStream.name)
-            option = st.selectbox(
-                'Select A Stream',
-                (stream_names))
-            if option != "Select a stream":
-                stream = streams[stream_names.index(option)-1]
-
-                branches = getBranches([client, stream])
-                branch_names = ["Select a branch"]
-                for aBranch in branches:
-                    branch_names.append(aBranch.name)
-
-                option = st.selectbox(
-                    'Select A Branch',
-                    (branch_names))
-                if option != "Select a branch":
-                    branch = branches[branch_names.index(option)-1]
-                    
-                    commits = getCommits(branch)
-                    commit_names = ["Select a commit"]
-                    for aCommit in commits:
-                        commit_names.append(str(aCommit.id)+": "+aCommit.message)
-                    option = st.selectbox('Select A Commit', (commit_names))
-                    if option != "Select a commit":
-                        commit = commits[commit_names.index(option)-1]
-                        st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+
-                                                stream.id+"&commit="
-                                                +commit.id+
-                                                "&transparent=false",
-                                                width=1200,
-                                                height=750)
+            'Select A Branch',
+            (branch_names))
+        if option != "Select a branch":
+            branch = branches[branch_names.index(option)-1]
+            
+            commits = getCommits(branch)
+            commit_names = ["Select a commit"]
+            for aCommit in commits:
+                commit_names.append(str(aCommit.id)+": "+aCommit.message)
+            option = st.selectbox('Select A Commit', (commit_names))
+            if option != "Select a commit":
+                commit = commits[commit_names.index(option)-1]
+                st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+
+                                        stream.id+"&commit="
+                                        +commit.id+
+                                        "&transparent=false",
+                                        width=1200,
+                                        height=750)
 
