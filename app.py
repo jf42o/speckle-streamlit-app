@@ -427,6 +427,8 @@ if not LOCAL:
 
         """
         html_code_streams= html_code_streams.replace("{streams_html}", streams_html)
+        for stream in streams:
+            html_code_streams= html_code_streams.replace("{streamId}", stream.id)
         st.markdown(html_code_streams,unsafe_allow_html=True)
 
 
