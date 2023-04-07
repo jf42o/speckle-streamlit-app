@@ -379,12 +379,27 @@ if not LOCAL:
         streams_html = "".join([f"<li data-id='{stream.id}'>{stream.name}</li>" for stream in streams])
 
         html_code_streams = """
-
+                             
                     <div class="streams-container">
-                    <ul class="streams-list">
-                        {streams_html}
-                    </ul>
-                </div>
+                        <ul class="streams-list">
+                            {streams_html}
+                        </ul>
+                    </div>
+
+                    <div class="branches-container">
+                        <div class="dropdown">
+                            <p class="dropbtn">Select a branch</p>
+                            <div id="branches-dropdown" class="dropdown-content"></div>
+                        </div>
+                    </div>
+
+                    <div class="commits-container">
+                        <div class="dropdown">
+                            <p class="dropbtn">Select a commit</p>
+                            <div id="commits-dropdown" class="dropdown-content"></div>
+                        </div>
+                    </div>
+
                 
                 <style>
                    .streams-container {
@@ -412,21 +427,7 @@ if not LOCAL:
                     .streams-list li:hover {
                     background-color: #1a6498;
                     }
-                    </style>
-
-                    <script>
-                document.querySelectorAll('.streams-list li').forEach(li => {
-                    li.addEventListener('click', () => {
-                        const streamId = li.getAttribute('data-id');
-                        // Perform some action with the stream ID, e.g. redirect to the stream page
-                        window.location.href = `/stream/${streamId}`; // Replace with the appropriate URL for your stream
-                    });
-                });
-                </script>
-                
-                <style>
-
-                    .branches-container, .commits-container {
+                     .branches-container, .commits-container {
                         width: 100%;
                         max-width: 600px;
                         margin-left: 20px;
@@ -460,32 +461,18 @@ if not LOCAL:
                     .dropdown:hover .dropdown-content {display: block;}
 
                     .dropdown:hover .dropbtn {background-color: #1a6498;}
+
                     </style>
 
-                    <div class="streams-container">
-                        <ul class="streams-list">
-                            {streams_html}
-                        </ul>
-                    </div>
-
-                    <div class="branches-container">
-                        <div class="dropdown">
-                            <p class="dropbtn">Select a branch</p>
-                            <div id="branches-dropdown" class="dropdown-content"></div>
-                        </div>
-                    </div>
-
-                    <div class="commits-container">
-                        <div class="dropdown">
-                            <p class="dropbtn">Select a commit</p>
-                            <div id="commits-dropdown" class="dropdown-content"></div>
-                        </div>
-                    </div>
-
                     <script>
-                    /*... (your existing JavaScript code for handling stream selection) ...*/
-
-                    // Add this function to handle branch and commit data received from Streamlit
+                document.querySelectorAll('.streams-list li').forEach(li => {
+                    li.addEventListener('click', () => {
+                        const streamId = li.getAttribute('data-id');
+                        // Perform some action with the stream ID, e.g. redirect to the stream page
+                        window.location.href = `/stream/${streamId}`; // Replace with the appropriate URL for your stream
+                    });
+                });
+                                 // Add this function to handle branch and commit data received from Streamlit
                     function receive_from_streamlit(event) {
                         if (event.data && event.data.type === 'streamlit') {
                             const {channel, data} = event.data;
@@ -512,8 +499,7 @@ if not LOCAL:
                     }
 
                     window.addEventListener('message', receive_from_streamlit);
-                    </script>
-
+                </script>
 
         """
         html_code_streams= html_code_streams.replace("{streams_html}", streams_html)
