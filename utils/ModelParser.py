@@ -23,3 +23,4 @@ def parse_and_update_model(commit_data, categories, params_to_search, updates=No
                         continue
             result.append(dict)
     return result
+

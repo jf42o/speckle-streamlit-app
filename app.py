@@ -2,9 +2,18 @@
 import requests
 import random
 import math
+import json
 import string
 import streamlit as st
 import pandas as pd
+from pandas.api.types import (
+    is_categorical_dtype,
+    is_datetime64_any_dtype,
+    is_numeric_dtype,
+    is_object_dtype,
+)
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
+
 
 
 #specklepy libraries
@@ -37,20 +46,6 @@ from specklepy.objects.geometry import *
 from specklepy.logging.exceptions import SpeckleException
 
 ## DEFINITIONS
-def createRandomChallenge(length=0):
-    lowercase = list(string.ascii_lowercase)
-    uppercase = list(string.ascii_uppercase)
-    punctuation = ["-",".","_","~"] # Only hyphen, period, underscore, and tilde are allowed by OAuth Code Challenge
-    digits = list(string.digits)
-    masterlist = lowercase+uppercase+digits+punctuation
-    masterlist = masterlist+lowercase+uppercase+digits
-    random.shuffle(masterlist)
-    if 0 < length <= 128:
-        masterlist = random.sample(masterlist, random.randint(length, length))
-    else:
-        masterlist = random.sample(masterlist, random.randint(64, 128))
-    return ''.join(masterlist)
-
 def getBranches(item):
 	client, stream = item
 	bList = client.branch.list(stream.id)
@@ -70,9 +65,14 @@ def getObject(client, stream, commit):
     last_obj_id = commit.referencedObject
     return operations.receive(obj_id=last_obj_id, remote_transport=transport)
 
-def parse_and_update_model(commit_data, categories, params_to_search, updates=None, upd=UPDATE):
-    if updates is None:
-        updates = {}
+
+#------------------------------------------------------------------------------------------------------#
+
+#toggle between local / redirection from speckleserver to app
+LOCAL = False
+UPDATE = True
+
+def parse_and_update_model(commit_data, categories, params_to_search):
     result = []
     for cat in categories:
         category_elements = commit_data[cat]
@@ -87,19 +87,42 @@ def parse_and_update_model(commit_data, categories, params_to_search, updates=No
                     try:
                         key = element["parameters"][parameter]["name"]
                         if key == param:
-                            if upd:
-                                element["parameters"][parameter]["value"] = updates[key]
                             dict[key] = element["parameters"][parameter]["value"]
                             break
                     except:
                         continue
             result.append(dict)
-    return result
+    return pd.DataFrame(result)
 
-#-----------------#
+import pandas as pd
 
-#toggle between local / redirection from speckleserver to app
-LOCAL = False
+def update_speckle_model(edited_dataframe, commit_data, categories, params_to_search, upd=UPDATE):
+    # Convert the edited dataframe back to a list of dictionaries
+    edited_data = edited_dataframe.to_dict(orient='records')
+
+    # Iterate through the categories and commit_data
+    for cat in categories:
+        category_elements = commit_data[cat]
+        for element in category_elements:
+            # Find the corresponding record in the edited_data
+            record = next((record for record in edited_data if record['ElementID'] == element['elementId'] and record['ID'] == element['id']), None)
+
+            if record:
+                # Apply parameter updates
+                parameters = element["parameters"].get_member_names()
+
+                for param in params_to_search:
+                    for parameter in parameters:
+                        try:
+                            key = element["parameters"][parameter]["name"]
+                            if key == param:
+                                # Update the parameter value in the model based on the edited dataframe
+                                if upd:
+                                    element["parameters"][parameter]["value"] = record[key]
+                                break
+                        except:
+                            continue
+    return commit_data
 
 appID = st.secrets["appID"]
 appSecret = st.secrets["appSecret"]
@@ -111,7 +134,164 @@ st.set_page_config(
     layout = "wide"
 )
 
-#--------------------------
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+
+
+#navbar
+html_code = '''
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&display=swap">
+
+<style>
+body, h1, h2, h3, h4, h5, h6, p, a {
+    font-family: 'Public Sans', sans-serif;
+}
+
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    margin-top: -60px; /* Adjust for fixed navbar height */
+}
+
+.fixed-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1f77b4;
+    padding: 5px 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    justify-content: space-between;
+}
+
+.fixed-nav img {
+    height: 30px;
+}
+
+.fixed-nav h1 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.centered-flex {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.search-input {
+    width: 100%;
+    height: 30px;
+    padding: 5px 40px 5px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #1f77b4;
+    color: white;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.custom-login-button {
+    background-color: #1f77b4;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-top : 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-family: 'Public Sans', sans-serif;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.custom-login-button img {
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.custom-login-button:hover {
+    background-color: #1a6498;
+}
+
+.custom-login-button:active {
+    background-color: #1f77b4;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+    trans
+}
+</style>
+
+<div class="fixed-nav">
+    <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+    <div class="centered-flex">
+        <h1>SpeckleLit</h1>
+    </div>
+
+
+'''
+st.markdown(html_code, unsafe_allow_html=True)
+
+
 #CONTAINERS
 header = st.container()
 authenticate = st.container()
@@ -121,28 +301,13 @@ authenticate = st.container()
 
 #----------------------------------------------------------------------------------------------------------#
 
-with header:
-    st.title("SpeckleLit")
 if not LOCAL:
-
     if 'access_code' not in st.session_state:
         st.session_state['access_code'] = None
     if 'token' not in st.session_state:
         st.session_state['token'] = None
     if 'refresh_token' not in st.session_state:
         st.session_state['refresh_token'] = None
-    if 'Building' not in st.session_state:
-        st.session_state['Building'] = None
-    if 'Apertures' not in st.session_state:
-        st.session_state['Apertures'] = None
-    if 'Shading' not in st.session_state:
-        st.session_state['Shading'] = None
-    if 'hbjson' not in st.session_state:
-        st.session_state['hbjson'] = None
-    if 'daylight_job' not in st.session_state:
-        st.session_state['daylight_job'] = None
-    if 'energyanalysis_job' not in st.session_state:
-        st.session_state['energyanalysis_job'] = None
     try:
         access_code = st.experimental_get_query_params()['access_code'][0]
         st.session_state['access_code'] = access_code
@@ -157,9 +322,33 @@ if not LOCAL:
         if not access_code:
             # Verify the app with the challenge
             verify_url="https://speckle.xyz/authn/verify/"+appID+"/"+st.secrets["challenge"]
-            st.image("https://speckle.systems/content/images/2021/02/logo_big.png",width=50)
-            link = '[Login to Speckle]('+verify_url+')'
-            st.subheader(link)
+            html_code = (f"""
+                        <div class="container">
+                            <button class="custom-login-button">
+                                <a href="{verify_url}" target="_blank" style="color: inherit; text-decoration: none;">
+                                    <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+                                    Login to Speckle
+                                </a>
+                            </button>
+                        </div>
+                        """
+                )
+            st.markdown(html_code, unsafe_allow_html=True)
+
+
+
+            #####testdata########################
+        
+            streams = [
+                {"name": "Stream 1", "description": "This is Stream 1"},
+                {"name": "Stream 2", "description": "This is Stream 2"},
+                {"name": "Stream 3", "description": "This is Stream 3"},
+            ]
+
+
+            ######testdata#########
+
+
         else:
             response = requests.post(
                     url=f"https://speckle.xyz/auth/token",
@@ -196,7 +385,7 @@ if not LOCAL:
             except:
                 streams = None
     #--------------------------------------------------------------------------------------------------------------------#
-
+    
     #Selection of Streams#
 
     if isinstance(streams, list):
@@ -224,31 +413,121 @@ if not LOCAL:
                 option = st.selectbox('Select A Commit', (commit_names))
                 if option != "Select a commit":
                     commit = commits[commit_names.index(option)-1]
+
+                    #change host, if not the public speckle.xyz"
+                    commit_url = "https://speckle.xyz/streams/" + stream.id + "/commits/" + commit.id
+                    print(commit_url)
                     st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+
                                             stream.id+"&commit="
                                             +commit.id+
                                             "&transparent=false",
-                                            width=1250,
-                                            height=750)
+                                            width=750,
+                                            height=600)
 
 
 else:
+    col1, col2 = st.columns(2)
 
-    commit_url = "https://speckle.xyz/streams/063a663421/commits/153e617495"
+    commit_url = "https://speckle.xyz/streams/89ad038e05/commits/a914527708"
+
+    def commit_url_to_speckle_url(commit_url):
+        # Extract stream id and commit id from the commit url
+        stream_id = commit_url.split('/')[4]
+        commit_id = commit_url.split('/')[6]
+        
+        # Build the speckle url
+        url = f"https://speckle.xyz/embed?stream={stream_id}&commit={commit_id}&transparent=true"
+        return url
+    
+    speckle_url = commit_url_to_speckle_url(commit_url)
     wrapper = StreamWrapper(commit_url)
     client = wrapper.get_client()
     account = get_default_account()
     client.authenticate_with_account(account)
-    st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+"063a663421"+"&commit="
-                                            "153e617495"+
-                                            "&transparent=false",
-                                            width=1250,
-                                            height=750)
 
-    commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
-    obj_id = commit.referencedObject
-    commit_data = operations.receive(obj_id, wrapper.get_transport())
-    categories = ["@Wände", "@Geschossdecken"]
-    params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
-    modeldata = parse_and_update_model(commit.referencedObject, categories, params_to_search)
-    dataframe_editable = st.experimental_data_editor(pd.DataFrame(modeldata))
+    if 'parsed_model_data' not in st.session_state:
+        st.session_state['parsed_model_data'] = None
+
+    with col1:
+
+        commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
+        obj_id = commit.referencedObject
+        commit_data = operations.receive(obj_id, wrapper.get_transport())
+
+        categories = ["@Wände", "@Geschossdecken"]
+        params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
+
+        # Parse the model only if it's not already parsed
+        if st.session_state['parsed_model_data'] is None:
+            st.session_state['parsed_model_data'] = parse_and_update_model(commit_data, categories, params_to_search)
+
+        ##FUNCTION for generating speckle url
+        def generate_speckle_url(commit_url, ids):
+            ids_string = ','.join([f'"{id}"' for id in ids])
+            #transparent = "&transparent=false"
+            url = f"{commit_url}&filter={{\"isolatedIds\":[{ids_string}]}}"
+            return url 
+
+        if 'selected_rows' not in st.session_state:
+            st.session_state.selected_rows = None
+        
+        st.session_state["speckle_url"] = commit_url
+
+
+        custom_css_aggrid = {
+            ".ag-row-hover": { "background-color": "#3a9ac9 !important"},
+            ".ag-header-cell-label": {"color" : "white",
+                                      "background-color" : "#3a9ac9",
+                                        "border-radius" : "5px",
+                                        "padding" : "4px 8px"},
+            ".ag-row" : { "background-color" : "white", "border-radius": "5px"},
+            ".ag-row:nth-child(odd)" : {"background-color" : "#f0f5f9"},
+            ".ag-row-selected": {"background-color": "blue !important",
+                                "color": "white !important"}}
+        
+        gb = GridOptionsBuilder.from_dataframe(st.session_state['parsed_model_data'])
+        gb.configure_default_column(editable=True, groupable=True)
+        gb.configure_pagination(enabled=True)
+        gb.configure_selection(selection_mode="multiple", use_checkbox=True, groupSelectsChildren="Group checkbox select children")
+        gb.configure_side_bar()
+        gridoptions = gb.build()
+
+        grid_return = AgGrid(
+            st.session_state['parsed_model_data'],
+            gridOptions=gridoptions,
+            update_mode=GridUpdateMode.MANUAL,
+            data_return_mode=DataReturnMode.FILTERED,
+            reload_data=True,
+            custom_css=custom_css_aggrid,
+            allow_unsafe_jscode=True,
+            height=600)
+   
+        sel_rows = grid_return["selected_rows"]
+        ids = [sel_rows["ID"] for sel_rows in sel_rows]
+        st.session_state["speckle_url"] =  generate_speckle_url(speckle_url,ids) #speckle_url 
+        edited_data_mid = grid_return["data"]
+        #st.write(edited_data)
+
+        grid_return_filtered = AgGrid(edited_data_mid,
+                                      gridOptions=gridoptions,
+                                      update_mode=GridUpdateMode.MANUAL,
+                                      data_return_mode=DataReturnMode.FILTERED,
+                                      reload_data=True
+                        )
+        if st.button("Commit Changes"):
+            edited_data = grid_return_filtered["data"]
+            updated = update_speckle_model(edited_data, commit_data, categories, params_to_search, upd=UPDATE)
+            new_object_id = operations.send(base=updated, transports=wrapper.get_transport())
+
+            # Create a new commit on the stream with the updated object
+            new_commit_id = client.commit.create(
+                stream_id=wrapper.stream_id,
+                object_id=new_object_id,
+                message="Updated parameter values using SpeckleLit",
+            )
+
+
+
+    with col2:
+        #st.write(st.session_state["speckle_url"])
+        st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=600)
