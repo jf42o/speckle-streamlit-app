@@ -335,20 +335,6 @@ if not LOCAL:
                 )
             st.markdown(html_code, unsafe_allow_html=True)
 
-
-
-            #####testdata########################
-        
-            streams = [
-                {"name": "Stream 1", "description": "This is Stream 1"},
-                {"name": "Stream 2", "description": "This is Stream 2"},
-                {"name": "Stream 3", "description": "This is Stream 3"},
-            ]
-
-
-            ######testdata#########
-
-
         else:
             response = requests.post(
                     url=f"https://speckle.xyz/auth/token",
@@ -389,6 +375,62 @@ if not LOCAL:
     #Selection of Streams#
 
     if isinstance(streams, list):
+
+        streams_html = "".join([f"<li data-id='{stream.id}'>{stream.name}</li>" for stream in streams])
+
+        html_code_streams = """
+
+                    <div class="streams-container">
+                    <ul class="streams-list">
+                        {streams_html}
+                    </ul>
+                </div>
+                
+                <style>
+                    .streams-container {
+                    width: 100%;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    }
+
+                    .streams-list {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    }
+
+                    .streams-list li {
+                    padding: 20px;
+                    background-color: #1f77b4;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                    color: white;
+                    font-weight: bold;
+                    cursor: pointer;
+                    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+                    }
+
+                    .streams-list li:hover {
+                    background-color: #1a6498;
+                    }
+                    </style>
+
+                    <script>
+                document.querySelectorAll('.streams-list li').forEach(li => {
+                    li.addEventListener('click', () => {
+                        const streamId = li.getAttribute('data-id');
+                        // Perform some action with the stream ID, e.g. redirect to the stream page
+                        window.location.href = `/stream/${streamId}`; // Replace with the appropriate URL for your stream
+                    });
+                });
+                </script>
+
+        """
+        html_code_streams= html_code_streams.replace("{streams_html}", streams_html)
+        st.markdown(html_code_streams,unsafe_allow_html=True)
+
+
+
         stream_names = ["Select a stream"]
         for aStream in streams:
             stream_names.append(aStream.name)
@@ -420,7 +462,7 @@ if not LOCAL:
                     st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+
                                             stream.id+"&commit="
                                             +commit.id+
-                                            "&transparent=false",
+                                            "&transparent=true",
                                             width=750,
                                             height=600)
 
