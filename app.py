@@ -385,128 +385,82 @@ if not LOCAL:
                             {streams_html}
                         </ul>
                     </div>
-
-                    <div class="branches-container">
-                        <div class="dropdown">
-                            <p class="dropbtn">Select a branch</p>
-                            <div id="branches-dropdown" class="dropdown-content"></div>
-                        </div>
-                    </div>
-
-                    <div class="commits-container">
-                        <div class="dropdown">
-                            <p class="dropbtn">Select a commit</p>
-                            <div id="commits-dropdown" class="dropdown-content"></div>
-                        </div>
-                    </div>
-
                 
-                <style>
-                   .streams-container {
-                    width: 100%;
-                    max-width: 600px;
-                    margin-left: 20px;
-                }
-                    .streams-list {
-                    list-style: none;
-                    padding: 0;
-                    margin: 0;
-                    }
+                    <div class="branches-container"></div>
 
-                    .streams-list li {
-                    padding: 20px;
-                    background-color: #1f77b4;
-                    border-radius: 5px;
-                    margin-bottom: 10px;
-                    color: white;
-                    font-weight: bold;
-                    cursor: pointer;
-                    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-                    }
+                    <div class="commits-container"></div>
 
-                    .streams-list li:hover {
-                    background-color: #1a6498;
-                    }
-                     .branches-container, .commits-container {
-                        width: 100%;
-                        max-width: 600px;
-                        margin-left: 20px;
-                        margin-top: 20px;
-                    }
+                    <style>
+                        .streams-container {{
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                        }}
 
-                    .dropdown {
-                        display: inline-block;
-                        position: relative;
-                    }
+                        .streams-list {{
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }}
 
-                    .dropdown-content {
-                        display: none;
-                        position: absolute;
-                        background-color: #f9f9f9;
-                        min-width: 160px;
-                        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                        z-index: 1;
-                        cursor: pointer;
-                    }
+                        .streams-list li {{
+                            padding: 20px;
+                            background-color: #1f77b4;
+                            border-radius: 5px;
+                            margin-bottom: 10px;
+                            color: white;
+                            font-weight: bold;
+                            cursor: pointer;
+                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+                        }}
 
-                    .dropdown-content p {
-                        color: black;
-                        padding: 12px 16px;
-                        text-decoration: none;
-                        display: block;
-                    }
+                        .streams-list li:hover {{
+                            background-color: #1a6498;
+                        }}
 
-                    .dropdown-content p:hover {background-color: #f1f1f1}
+                        .branches-list {{
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }}
 
-                    .dropdown:hover .dropdown-content {display: block;}
+                        .branches-list li {{
+                            padding: 10px;
+                            background-color: #f2f2f2;
+                            border-radius: 5px;
+                            margin-bottom: 10px;
+                            cursor: pointer;
+                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+                        }}
 
-                    .dropdown:hover .dropbtn {background-color: #1a6498;}
+                        .branches-list li:hover {{
+                            background-color: #e0e0e0;
+                        }}
 
+                        .commits-list {{
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }}
+
+                        .commits-list li {{
+                            padding: 10px;
+                            background-color: #f2f2f2;
+                            border-radius: 5px;
+                            margin-bottom: 10px;
+                            cursor: pointer;
+                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+                        }}
+
+                        .commits-list li:hover {{
+                            background-color: #e0e0e0;
+                        }}
                     </style>
-
-                    <script>
-                document.querySelectorAll('.streams-list li').forEach(li => {
-                    li.addEventListener('click', () => {
-                        const streamId = li.getAttribute('data-id');
-                        // Perform some action with the stream ID, e.g. redirect to the stream page
-                        window.location.href = `/stream/${streamId}`; // Replace with the appropriate URL for your stream
-                    });
-                });
-                                 // Add this function to handle branch and commit data received from Streamlit
-                    function receive_from_streamlit(event) {
-                        if (event.data && event.data.type === 'streamlit') {
-                            const {channel, data} = event.data;
-                            if (channel === 'branches_data') {
-                                const branchesDropdown = document.getElementById('branches-dropdown');
-                                branchesDropdown.innerHTML = data.map(branch => `<p data-id="${branch.id}">${branch.name}</p>`).join('');
-                                branchesDropdown.querySelectorAll('p').forEach(p => {
-                                    p.addEventListener('click', () => {
-                                        const branchId = p.getAttribute('data-id');
-                                        send_to_streamlit('branch_selected', branchId);
-                                    });
-                                });
-                            } else if (channel === 'commits_data') {
-                                const commitsDropdown = document.getElementById('commits-dropdown');
-                                commitsDropdown.innerHTML = data.map(commit => `<p data-id="${commit.id}">${commit.id}: ${commit.message}</p>`).join('');
-                                commitsDropdown.querySelectorAll('p').forEach(p => {
-                                    p.addEventListener('click', () => {
-                                        const commitId = p.getAttribute('data-id');
-                                        send_to_streamlit('commit_selected', commitId);
-                                    });
-                                });
-                            }
-                        }
-                    }
-
-                    window.addEventListener('message', receive_from_streamlit);
-                </script>
-
         """
         html_code_streams= html_code_streams.replace("{streams_html}", streams_html)
         for stream in streams:
             html_code_streams= html_code_streams.replace("{streamId}", stream.id)
         st.markdown(html_code_streams,unsafe_allow_html=True)
-
 
 
         stream_names = ["Select a stream"]
