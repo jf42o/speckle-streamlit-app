@@ -124,6 +124,15 @@ def update_speckle_model(edited_dataframe, commit_data, categories, params_to_se
                             continue
     return commit_data
 
+    def commit_url_to_speckle_url(commit_url):
+            # Extract stream id and commit id from the commit url
+            stream_id = commit_url.split('/')[4]
+            commit_id = commit_url.split('/')[6]
+            
+            # Build the speckle url
+            url = f"https://speckle.xyz/embed?stream={stream_id}&commit={commit_id}&transparent=true"
+            return url
+
 appID = st.secrets["appID"]
 appSecret = st.secrets["appSecret"]
 
@@ -472,13 +481,110 @@ if not LOCAL:
 
                     #change host, if not the public speckle.xyz"
                     commit_url = "https://speckle.xyz/streams/" + stream.id + "/commits/" + commit.id
-                    print(commit_url)
-                    st.components.v1.iframe(src="https://speckle.xyz/embed?stream=" +
-                                            stream.id + "&commit=" +
-                                            commit.id +
-                                            "&transparent=true",
-                                            width=750,
-                                            height=600)
+
+                    def commit_url_to_speckle_url(commit_url):
+                        # Extract stream id and commit id from the commit url
+                        stream_id = commit_url.split('/')[4]
+                        commit_id = commit_url.split('/')[6]
+                        
+                        # Build the speckle url
+                        url = f"https://speckle.xyz/embed?stream={stream_id}&commit={commit_id}&transparent=true"
+                        return url
+                    
+                    speckle_url = commit_url_to_speckle_url(commit_url)
+
+                    wrapper = StreamWrapper(commit_url)
+
+                    client = wrapper.get_client()
+                    account = get_default_account()
+                    client.authenticate_with_account(account)
+
+                    if 'parsed_model_data' not in st.session_state:
+                        st.session_state['parsed_model_data'] = None
+
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+
+                        commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
+                        obj_id = commit.referencedObject
+                        commit_data = operations.receive(obj_id, wrapper.get_transport())
+
+                        categories = ["@Wände", "@Geschossdecken"]
+                        params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
+
+                        # Parse the model only if it's not already parsed
+                        if st.session_state['parsed_model_data'] is None:
+                            st.session_state['parsed_model_data'] = parse_and_update_model(commit_data, categories, params_to_search)
+
+                        ##FUNCTION for generating speckle url
+                        def generate_speckle_url(commit_url, ids):
+                            ids_string = ','.join([f'"{id}"' for id in ids])
+                            #transparent = "&transparent=false"
+                            url = f"{commit_url}&filter={{\"isolatedIds\":[{ids_string}]}}"
+                            return url 
+
+                        if 'selected_rows' not in st.session_state:
+                            st.session_state.selected_rows = None
+                        
+                        st.session_state["speckle_url"] = commit_url
+
+
+                        custom_css_aggrid = {
+                            ".ag-row-hover": { "background-color": "#3a9ac9 !important"},
+                            ".ag-header-cell-label": {"color" : "white",
+                                                    "background-color" : "#3a9ac9",
+                                                        "border-radius" : "5px",
+                                                        "padding" : "4px 8px"},
+                            ".ag-row" : { "background-color" : "white", "border-radius": "5px"},
+                            ".ag-row:nth-child(odd)" : {"background-color" : "#f0f5f9"},
+                            ".ag-row-selected": {"background-color": "blue !important",
+                                                "color": "white !important"}}
+                        
+                        gb = GridOptionsBuilder.from_dataframe(st.session_state['parsed_model_data'])
+                        gb.configure_default_column(editable=True, groupable=True)
+                        gb.configure_pagination(enabled=True)
+                        gb.configure_selection(selection_mode="multiple", use_checkbox=True, groupSelectsChildren="Group checkbox select children")
+                        gb.configure_side_bar()
+                        gridoptions = gb.build()
+
+                        grid_return = AgGrid(
+                            st.session_state['parsed_model_data'],
+                            gridOptions=gridoptions,
+                            update_mode=GridUpdateMode.MANUAL,
+                            data_return_mode=DataReturnMode.FILTERED,
+                            reload_data=True,
+                            custom_css=custom_css_aggrid,
+                            allow_unsafe_jscode=True,
+                            height=600)
+                
+                        sel_rows = grid_return["selected_rows"]
+                        ids = [sel_rows["ID"] for sel_rows in sel_rows]
+                        st.session_state["speckle_url"] =  generate_speckle_url(speckle_url,ids) #speckle_url 
+                        edited_data_mid = grid_return["data"]
+                        #st.write(edited_data)
+
+                        grid_return_filtered = AgGrid(edited_data_mid,
+                                                    gridOptions=gridoptions,
+                                                    update_mode=GridUpdateMode.MANUAL,
+                                                    data_return_mode=DataReturnMode.FILTERED,
+                                                    reload_data=True
+                                        )
+                        if st.button("Commit Changes"):
+                            edited_data = grid_return_filtered["data"]
+                            updated = update_speckle_model(edited_data, commit_data, categories, params_to_search, upd=UPDATE)
+                            new_object_id = operations.send(base=updated, transports=wrapper.get_transport())
+
+                            # Create a new commit on the stream with the updated object
+                            new_commit_id = client.commit.create(
+                                stream_id=wrapper.stream_id,
+                                object_id=new_object_id,
+                                message="Updated parameter values using SpeckleLit",
+                            )
+
+                    with col2:
+                        #st.write(st.session_state["speckle_url"])
+                        st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=600)
 
 
 else:
