@@ -582,8 +582,8 @@ if not LOCAL:
                     wrapper = StreamWrapper(commit_url)
 
                     client = wrapper.get_client()
-                    account = get_default_account()
-                    client.authenticate_with_account(account)
+                    #account = get_default_account()
+                    #client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
                         st.session_state['parsed_model_data'] = None
