@@ -69,7 +69,7 @@ def getObject(client, stream, commit):
 #------------------------------------------------------------------------------------------------------#
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = False
+LOCAL = True
 UPDATE = True
 
 def parse_and_update_model(commit_data, categories, params_to_search):
@@ -176,6 +176,15 @@ hide_streamlit_style = """
                 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
+#Hide the Sidebar
+
+st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] {
+            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 #navbar
 html_code = '''
@@ -193,7 +202,7 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     align-items: center;
     min-height: 100vh;
     flex-direction: column;
-    margin-top: -60px; /* Adjust for fixed navbar height */
+    margin-top: -300px; /* Adjust for fixed navbar height */
 }
 
 .fixed-nav {
@@ -208,10 +217,30 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     align-items: center;
     height: 60px;
     justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.left-container, .center-container, .right-container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+
+.left-container {
+    justify-content: flex-start;
+}
+
+.center-container {
+    justify-content: center;
+}
+
+.right-container {
+    justify-content: flex-end;
 }
 
 .fixed-nav img {
     height: 30px;
+    margin-right: 8px;
 }
 
 .fixed-nav h1 {
@@ -219,40 +248,62 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     margin: 0;
     font-size: 24px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    line-height: 30px;
 }
 
+.nav-links a {
+    color: inherit;
+    text-decoration: none;
+    line-height: 30px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    font-size: 18px;
+}
+
+.nav-links a {
+    color: inherit;
+    text-decoration: none;
+    line-height: 30px;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
 .centered-flex {
     display: flex;
     justify-content: center;
     flex-grow: 1;
 }
-
-.search-container {
-    position: relative;
+.nav-links {
+    display: flex;
+    gap: 10px;
+    color: white;
+    align-items: center;
+    font-size: 24px;
+}
+.nav-links a {
+    color: inherit;
+    text-decoration: none;
+    line-height: 30px;
+    font-size: 15px;
+}
+.nav-links a:hover {
+    text-decoration: underline;
+}
+.fixed-nav img {
+    height: 30px;
+}
+.fixed-nav h1 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    line-height: 30px;
+}
+.centered-flex {
+    display: flex;
+    justify-content: flex-start;
     flex-grow: 1;
     margin-left: 20px;
-    margin-right: 20px;
-}
-
-.search-input {
-    width: 100%;
-    height: 30px;
-    padding: 5px 40px 5px 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    background-color: #1f77b4;
-    color: white;
-}
-
-.search-icon {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: white;
-    cursor: pointer;
 }
 
 .custom-login-button {
@@ -288,16 +339,59 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
     trans
 }
+
+.middle-text-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Align the text to the top */
+    margin-top: 60px; /* Increase margin to 100px below navbar (60px navbar height + 100px) */
+    text-align: center;
+}
+
+.middle-text {
+    font-family: 'Inter', sans-serif; /* Apply the Inter font */
+    font-size: 72px;
+    font-weight: 900;
+    color: #000;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.gradient-text {
+    background-image: linear-gradient(to right, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef); /* Add the gradient */
+    -webkit-background-clip: text; /* Add webkit background clip to support Safari */
+    background-clip: text;
+    color: transparent; /* Set the color to transparent */
+}
+.gradient-text-streamlit {
+    background-image: linear-gradient(to right, #f63366, #ff5858, #ff8373, #ffa599, #ffc9bd); /* Add the Streamlit gradient */
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 </style>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+
 <div class="fixed-nav">
-    <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-    <div class="centered-flex">
+    <div class="left-container">
+        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
         <h1>SpeckleLit</h1>
     </div>
+    <div class="center-container"></div>
+    <div class="right-container">
+        <div class="nav-links">
+            <a href="https://specklelit.streamlit.app/Data">Data</a>
+            <a href="https://specklelit.streamlit.app/About">About</a>
+        </div>
+    </div>
+</div>
 
+<div class="middle-text-container">
+    <h1 class="middle-text">Make sense from your <span class="gradient-text">Speckle Data</span>. SpeckleLit.</h1>
+</div>
 
 '''
+
 st.markdown(html_code, unsafe_allow_html=True)
 
 
@@ -503,7 +597,7 @@ if not LOCAL:
                         st.session_state['parsed_model_data'] = None
 
                     col1, col2 = st.columns(2)
-                    
+
                     with col1:
 
                         commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
@@ -645,7 +739,9 @@ else:
             ".ag-row" : { "background-color" : "white", "border-radius": "5px"},
             ".ag-row:nth-child(odd)" : {"background-color" : "#f0f5f9"},
             ".ag-row-selected": {"background-color": "blue !important",
-                                "color": "white !important"}}
+                                "color": "white !important"}
+        }
+        
         
         gb = GridOptionsBuilder.from_dataframe(st.session_state['parsed_model_data'])
         gb.configure_default_column(editable=True, groupable=True)
@@ -664,8 +760,8 @@ else:
             allow_unsafe_jscode=True,
             height=600)
    
-        sel_rows = grid_return["selected_rows"]
-        ids = [sel_rows["ID"] for sel_rows in sel_rows]
+        sel_rows = grid_return["data"]
+        ids = list(sel_rows["ID"])
         st.session_state["speckle_url"] =  generate_speckle_url(speckle_url,ids) #speckle_url 
         edited_data_mid = grid_return["data"]
         #st.write(edited_data)
@@ -674,7 +770,10 @@ else:
                                       gridOptions=gridoptions,
                                       update_mode=GridUpdateMode.MANUAL,
                                       data_return_mode=DataReturnMode.FILTERED,
-                                      reload_data=True
+                                      reload_data=True,
+                                      custom_css = custom_css_aggrid,
+                                      allow_unsafe_jscode=True,
+                                      height=200
                         )
         if st.button("Commit Changes"):
             edited_data = grid_return_filtered["data"]
@@ -692,4 +791,4 @@ else:
 
     with col2:
         #st.write(st.session_state["speckle_url"])
-        st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=600)
+        st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=750)
