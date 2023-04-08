@@ -376,66 +376,51 @@ if not LOCAL:
 
     if isinstance(streams, list):
 
-        streams_data = [
-            {
-                "id": s.id,
-                "name": s.name,
-                "branches": [
-                    {
-                        "id": b.id,
-                        "name": b.name,
-                        "commits": [{"id": c.id, "message": c.message} for c in getCommits(b)],
-                    }
-                    for b in getBranches([client, s])
-                ],
+        st.markdown(
+
+                        """
+        <style>
+            .speckle-style .select-container {
+                position: relative;
             }
-            for s in streams
-        ]
-        streams_json = json.dumps(streams_data)
 
-        html_code_streams = st.markdown(f"""
-            <style>
-                .speckle-container {{
-                    font-family: Arial, sans-serif;
-                    background-color: #007bff;
-                    color: white;
-                    padding: 1rem;
-                    border-radius: 5px;
-                }}
+            .speckle-style .st-b5 {
+                background-color: #007bff;
+                color: white;
+                border-radius: 5px;
+            }
 
-                .speckle-label {{
-                    display: block;
-                    margin-bottom: 5px;
-                }}
+            .speckle-style .st-b5:after {
+                content: "";
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-width: 5px 5px 0;
+                border-style: solid;
+                border-color: white transparent transparent;
+            }
+        </style>
+        """,
+            unsafe_allow_html=True,
+        )
 
-                .speckle-select {{
-                    padding: 5px;
-                    margin-bottom: 10px;
-                    background-color: white;
-                    color: #007bff;
-                    width: 100%;
-                    box-sizing: border-box;
-                    border-radius: 5px;
-                }}
-            </style>
-            <div class="speckle-container">
-                <h2>Speckle Stream Selection</h2>
-                <label for="streamSelect" class="speckle-label">Select a Stream:</label>
-                <select id="streamSelect" class="speckle-select">
-                    <option>Select a stream</option>
-                </select>
-                <label for="branchSelect" class="speckle-label">Select a Branch:</label>
-                <select id="branchSelect" class="speckle-select" hidden>
-                    <option>Select a branch</option>
-                </select>
-                <label for="commitSelect" class="speckle-label">Select a Commit:</label>
-                <select id="commitSelect" class="speckle-select" hidden>
-                    <option>Select a commit</option>
-                </select>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown(
+            """
+        <script>
+            function applySpeckleStyleToSelectbox() {
+                const selectboxes = document.querySelectorAll('.st-b5');
+                for (let selectbox of selectboxes) {
+                    const container = selectbox.parentElement;
+                    container.classList.add('speckle-style', 'select-container');
+                }
+            }
 
-        
+            setTimeout(applySpeckleStyleToSelectbox, 500);
+        </script>
+        """,
+            unsafe_allow_html=True,
+        )
         stream_names = ["Select a stream"]
         for aStream in streams:
             stream_names.append(aStream.name)
