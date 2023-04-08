@@ -69,7 +69,7 @@ def getObject(client, stream, commit):
 #------------------------------------------------------------------------------------------------------#
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 UPDATE = True
 
 def parse_and_update_model(commit_data, categories, params_to_search):
