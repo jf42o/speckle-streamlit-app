@@ -363,11 +363,6 @@ body, h1, h2, h3, h4, h5, h6, p, a {
 st.markdown(html_code, unsafe_allow_html=True)
 
 
-#CONTAINERS
-header = st.container()
-authenticate = st.container()
-#--------------------------
-
 #Authentification#
 
 #----------------------------------------------------------------------------------------------------------#
@@ -405,6 +400,10 @@ if not LOCAL:
                         """
                 )
             st.markdown(html_code, unsafe_allow_html=True)
+
+            account = get_default_account()
+            st.write(get_default_account)
+
 
         else:
             response = requests.post(
@@ -556,8 +555,8 @@ if not LOCAL:
                     wrapper = StreamWrapper(commit_url)
 
                     client = wrapper.get_client()
-                    #account = get_default_account()
-                    #client.authenticate_with_account(account)
+                    account = get_default_account()
+                    client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
                         st.session_state['parsed_model_data'] = None
