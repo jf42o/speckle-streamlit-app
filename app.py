@@ -393,132 +393,49 @@ if not LOCAL:
         ]
         streams_json = json.dumps(streams_data)
 
-        html_code_streams = (f"""
-        <style>
-            .speckle-container {{
-                font-family: Arial, sans-serif;
-                background-color: #007bff;
-                color: white;
-                padding: 1rem;
-                border-radius: 5px;
-            }}
-
-            .speckle-label {{
-                display: block;
-                margin-bottom: 5px;
-            }}
-
-            .speckle-select {{
-                padding: 5px;
-                margin-bottom: 10px;
-                background-color: white;
-                color: #007bff;
-                width: 100%;
-                box-sizing: border-box;
-                border-radius: 5px;
-            }}
-        </style>
-        <div class="speckle-container">
-            <h2>Speckle Stream Selection</h2>
-            <label for="streamSelect" class="speckle-label">Select a Stream:</label>
-            <select id="streamSelect" class="speckle-select">
-                <option>Select a stream</option>
-            </select>
-            <label for="branchSelect" class="speckle-label">Select a Branch:</label>
-            <select id="branchSelect" class="speckle-select" hidden>
-                <option>Select a branch</option>
-            </select>
-            <label for="commitSelect" class="speckle-label">Select a Commit:</label>
-            <select id="commitSelect" class="speckle-select" hidden>
-                <option>Select a commit</option>
-            </select>
-        </div>
-        <script>
-            const streams = {streams_json};
-
-            const streamSelect = document.getElementById('streamSelect');
-            const branchSelect = document.getElementById('branchSelect');
-            const commitSelect = document.getElementById('commitSelect');
-
-            function loadStreams() {{
-                streams.forEach(stream => {{
-                    const option = document.createElement('option');
-                    option.value = stream.id;
-                    option.textContent = stream.name;
-                    streamSelect.appendChild(option);
-                }});
-            }}
-
-            async function fetchBranches(streamId) {{
-                const stream = streams.find(s => s.id === streamId);
-                return stream ? stream.branches : [];
-            }}
-
-            async function fetchCommits(branchId) {{
-                for (const stream of streams) {{
-                    for (const branch of stream.branches) {{
-                        if (branch.id === branchId) {{
-                            return branch.commits;
-                        }}
-                    }}
+        html_code_streams = st.markdown(f"""
+            <style>
+                .speckle-container {{
+                    font-family: Arial, sans-serif;
+                    background-color: #007bff;
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 5px;
                 }}
-                return [];
-            }}
 
-            streamSelect.addEventListener('change', async () => {{
-                if (streamSelect.value !== 'Select a stream') {{
-                    let streamId = streamSelect.value;
-                    const branches = await fetchBranches(streamId);
-
-                    branchSelect.innerHTML = '<option>Select a branch</option>';
-                    branches.forEach(branch => {{
-                        const option = document.createElement('option');
-                        option.value = branch.id;
-                        option.textContent = branch.name;
-                        branchSelect.appendChild(option);
-                    }});
-
-                    branchSelect.hidden = false;
-                }} else {{
-                    branchSelect.hidden = true;
+                .speckle-label {{
+                    display: block;
+                    margin-bottom: 5px;
                 }}
-                commitSelect.hidden = true;
-            }});
 
-            branchSelect.addEventListener('change', async () => {{
-            if (branchSelect.value !== 'Select a branch') {{
-                let branchId = branchSelect.value;
-                const commits = await fetchCommits(branchId);
+                .speckle-select {{
+                    padding: 5px;
+                    margin-bottom: 10px;
+                    background-color: white;
+                    color: #007bff;
+                    width: 100%;
+                    box-sizing: border-box;
+                    border-radius: 5px;
+                }}
+            </style>
+            <div class="speckle-container">
+                <h2>Speckle Stream Selection</h2>
+                <label for="streamSelect" class="speckle-label">Select a Stream:</label>
+                <select id="streamSelect" class="speckle-select">
+                    <option>Select a stream</option>
+                </select>
+                <label for="branchSelect" class="speckle-label">Select a Branch:</label>
+                <select id="branchSelect" class="speckle-select" hidden>
+                    <option>Select a branch</option>
+                </select>
+                <label for="commitSelect" class="speckle-label">Select a Commit:</label>
+                <select id="commitSelect" class="speckle-select" hidden>
+                    <option>Select a commit</option>
+                </select>
+            </div>
+            """, unsafe_allow_html=True)
 
-                commitSelect.innerHTML = '<option>Select a commit</option>';
-                commits.forEach(commit => {{
-                    const option = document.createElement('option');
-                    option.value = commit.id;
-                    option.textContent = commit.id + ': ' + commit.message;
-                    commitSelect.appendChild(option);
-                }});
-
-                commitSelect.hidden = false;
-            }} else {{
-                commitSelect.hidden = true;
-            }}
-        }});
-
-        // Handle the commit selection if needed
-        commitSelect.addEventListener('change', () => {{
-            if (commitSelect.value !== 'Select a commit') {{
-                let commitId = commitSelect.value;
-                // Do something with the commitId, e.g., load data or trigger an action
-            }}
-        }});
-
-        loadStreams();
-    </script>
-    """)
-
-
-        st.markdown(html_code_streams,unsafe_allow_html=True)
-
+        
         stream_names = ["Select a stream"]
         for aStream in streams:
             stream_names.append(aStream.name)
