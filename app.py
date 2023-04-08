@@ -401,10 +401,6 @@ if not LOCAL:
                 )
             st.markdown(html_code, unsafe_allow_html=True)
 
-            account = get_default_account()
-            st.write(get_default_account)
-
-
         else:
             response = requests.post(
                     url=f"https://speckle.xyz/auth/token",
@@ -552,10 +548,10 @@ if not LOCAL:
                     
                     speckle_url = commit_url_to_speckle_url(commit_url)
 
-                    wrapper = StreamWrapper(commit_url)
+                    #wrapper = StreamWrapper(commit_url)
 
-                    client = wrapper.get_client()
-                    account = get_default_account()
+                    #client = wrapper.get_client()
+                    #account = get_default_account()
                     client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
@@ -565,9 +561,10 @@ if not LOCAL:
 
                     with col1:
 
-                        commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
+                        transport = ServerTransport(client=client, stream_id=stream.id)
+                        commit = client.commit.get(stream.id, commit.id)
                         obj_id = commit.referencedObject
-                        commit_data = operations.receive(obj_id, wrapper.get_transport())
+                        commit_data = operations.receive(obj_id, transports=transport)
 
                         categories = ["@Wände", "@Geschossdecken"]
                         params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
