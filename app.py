@@ -8,16 +8,7 @@ import streamlit as st
 import pandas as pd
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
 
-
-
-#specklepy libraries
 from specklepy.api.client import SpeckleClient
-from specklepy.api.credentials import get_account_from_token
-#specklepy libraries
-from specklepy.api.client import SpeckleClient
-from specklepy.api.credentials import get_account_from_token
-from specklepy.api.client import SpeckleClient
-from specklepy.api.credentials import get_default_account
 from specklepy.api.credentials import get_account_from_token
 from specklepy.transports.memory import MemoryTransport
 from specklepy.api import operations
@@ -29,17 +20,9 @@ from specklepy.logging.exceptions import SpeckleException
 from specklepy.objects.other import RenderMaterial
 from specklepy.api import operations
 
-from specklepy.api.client import SpeckleClient
 from specklepy.api.credentials import get_default_account
-from specklepy.transports.memory import MemoryTransport
-from specklepy.api import operations
-from specklepy.api.wrapper import StreamWrapper
-from specklepy.api.resources.stream import Stream
-from specklepy.transports.server import ServerTransport
-from specklepy.objects.geometry import *
-from specklepy.logging.exceptions import SpeckleException
 
-## DEFINITIONS
+
 def getBranches(item):
 	client, stream = item
 	bList = client.branch.list(stream.id)
@@ -117,15 +100,6 @@ def update_speckle_model(edited_dataframe, commit_data, categories, params_to_se
                         except:
                             continue
     return commit_data
-
-    def commit_url_to_speckle_url(commit_url):
-            # Extract stream id and commit id from the commit url
-            stream_id = commit_url.split('/')[4]
-            commit_id = commit_url.split('/')[6]
-            
-            # Build the speckle url
-            url = f"https://speckle.xyz/embed?stream={stream_id}&commit={commit_id}&transparent=true"
-            return url
 
 appID = st.secrets["appID"]
 appSecret = st.secrets["appSecret"]
@@ -567,7 +541,6 @@ if not LOCAL:
 
                     #change host, if not the public speckle.xyz"
                     commit_url = "https://speckle.xyz/streams/" + stream.id + "/commits/" + commit.id
-                    st.write(commit_url)
 
                     def commit_url_to_speckle_url(commit_url):
                         # Extract stream id and commit id from the commit url
@@ -583,8 +556,8 @@ if not LOCAL:
                     wrapper = StreamWrapper(commit_url)
 
                     client = wrapper.get_client()
-                    account = get_default_account()
-                    client.authenticate_with_account(account)
+                    #account = get_default_account()
+                    #client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
                         st.session_state['parsed_model_data'] = None
