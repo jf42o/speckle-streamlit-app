@@ -6,12 +6,6 @@ import json
 import string
 import streamlit as st
 import pandas as pd
-from pandas.api.types import (
-    is_categorical_dtype,
-    is_datetime64_any_dtype,
-    is_numeric_dtype,
-    is_object_dtype,
-)
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
 
 
@@ -69,7 +63,7 @@ def getObject(client, stream, commit):
 #------------------------------------------------------------------------------------------------------#
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 UPDATE = True
 
 def parse_and_update_model(commit_data, categories, params_to_search):
