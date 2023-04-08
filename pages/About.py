@@ -7,5 +7,5 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-session = st.session_state
-st.write(session.test)
+#session = st.session_state
+#st.write(session.test)
