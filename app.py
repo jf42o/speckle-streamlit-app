@@ -548,10 +548,10 @@ if not LOCAL:
                     
                     speckle_url = commit_url_to_speckle_url(commit_url)
 
-                    #wrapper = StreamWrapper(commit_url)
+                    wrapper = StreamWrapper(commit_url)
 
-                    #client = wrapper.get_client()
-                    #account = get_default_account()
+                    client = wrapper.get_client()
+                    account = get_default_account()
                     client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
@@ -561,10 +561,9 @@ if not LOCAL:
 
                     with col1:
 
-                        transport = ServerTransport(client=client, stream_id=stream.id)
-                        commit = client.commit.get(stream.id, commit.id)
+                        commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
                         obj_id = commit.referencedObject
-                        commit_data = operations.receive(obj_id, transports=transport)
+                        commit_data = operations.receive(obj_id, wrapper.get_transport())
 
                         categories = ["@Wände", "@Geschossdecken"]
                         params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
