@@ -448,17 +448,17 @@ if not LOCAL:
         col1, col2, col3 = st.columns(3)
 
         option = col1.selectbox(
-            'Select A Stream',
+            'Select your stream',
             (stream_names))
 
-        if option != "Select a stream":
+        if option != "Select your stream":
             stream = streams[stream_names.index(option)-1]
             branches = getBranches([client, stream])
             branch_names = ["Select a branch"]
             for aBranch in branches:
                 branch_names.append(aBranch.name)
             option = col2.selectbox(
-                'Select A Branch',
+                'Select a branch',
                 (branch_names))
             if option != "Select a branch":
                 branch = branches[branch_names.index(option)-1]
@@ -466,7 +466,7 @@ if not LOCAL:
                 commit_names = ["Select a commit"]
                 for aCommit in commits:
                     commit_names.append(str(aCommit.id) + ": " + aCommit.message)
-                option = col3.selectbox('Select A Commit', (commit_names))
+                option = col3.selectbox('Select a Commit', (commit_names))
                 if option != "Select a commit":
                     commit = commits[commit_names.index(option)-1]
 
