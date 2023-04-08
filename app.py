@@ -444,16 +444,20 @@ if not LOCAL:
         stream_names = ["Select a stream"]
         for aStream in streams:
             stream_names.append(aStream.name)
-        option = st.selectbox(
+
+        col1, col2, col3 = st.columns(3)
+
+        option = col1.selectbox(
             'Select A Stream',
             (stream_names))
+
         if option != "Select a stream":
             stream = streams[stream_names.index(option)-1]
             branches = getBranches([client, stream])
             branch_names = ["Select a branch"]
             for aBranch in branches:
                 branch_names.append(aBranch.name)
-            option = st.selectbox(
+            option = col2.selectbox(
                 'Select A Branch',
                 (branch_names))
             if option != "Select a branch":
@@ -461,17 +465,17 @@ if not LOCAL:
                 commits = getCommits(branch)
                 commit_names = ["Select a commit"]
                 for aCommit in commits:
-                    commit_names.append(str(aCommit.id)+": "+aCommit.message)
-                option = st.selectbox('Select A Commit', (commit_names))
+                    commit_names.append(str(aCommit.id) + ": " + aCommit.message)
+                option = col3.selectbox('Select A Commit', (commit_names))
                 if option != "Select a commit":
                     commit = commits[commit_names.index(option)-1]
 
                     #change host, if not the public speckle.xyz"
                     commit_url = "https://speckle.xyz/streams/" + stream.id + "/commits/" + commit.id
                     print(commit_url)
-                    st.components.v1.iframe(src="https://speckle.xyz/embed?stream="+
-                                            stream.id+"&commit="
-                                            +commit.id+
+                    st.components.v1.iframe(src="https://speckle.xyz/embed?stream=" +
+                                            stream.id + "&commit=" +
+                                            commit.id +
                                             "&transparent=true",
                                             width=750,
                                             height=600)
