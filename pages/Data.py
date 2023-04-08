@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import specklepy
+from specklepy.api.credentials import get_default_account
 
 st.markdown("""
     <style>
@@ -10,6 +10,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-session = st.session_state
-session.test = "Test"
-st.write(session.access_code)
+#session = st.session_state
+#session.test = "Test"
+#st.write(session.access_code)

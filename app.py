@@ -69,7 +69,7 @@ def getObject(client, stream, commit):
 #------------------------------------------------------------------------------------------------------#
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = False
+LOCAL = True
 UPDATE = True
 
 def parse_and_update_model(commit_data, categories, params_to_search):
@@ -542,8 +542,6 @@ if not LOCAL:
         </style>
         """, unsafe_allow_html=True)
 
-
-    
         stream_names = ["Select a stream"]
         for aStream in streams:
             stream_names.append(aStream.name)
@@ -786,7 +784,6 @@ else:
                 object_id=new_object_id,
                 message="Updated parameter values using SpeckleLit",
             )
-
 
 
     with col2:
