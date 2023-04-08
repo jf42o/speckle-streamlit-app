@@ -375,63 +375,69 @@ if not LOCAL:
     #Selection of Streams#
 
     if isinstance(streams, list):
-        
+
         st.markdown("""
-    <style>
-        .stSelectbox {
-            width: 100%;
-        }
-        .stSelectbox .st-ax,
-        .stSelectbox .st-cq,
-        .stSelectbox .st-d5,
-        .stSelectbox .st-cs,
-        .stSelectbox .st-ay,
-        .stSelectbox .st-ce,
-        .stSelectbox .st-ck {
-            background-color: #007bff !important;
-            color: white !important;
-            border-radius: 5px !important;
-            padding: 5px !important;
-            margin-bottom: 10px !important;
-        }
-        .stSelectbox .st-c7,
-        .stSelectbox .st-cd {
-            color: white !important;
-        }
-        .stSelectbox .st-bs,
-        .stSelectbox .st-d3 {
-            fill: white !important;
-        }
-        .stSelectbox .st-b3,
-        .stSelectbox .st-d0 {
-            border: none !important;
-        }
-        .stSelectbox .st-bf,
-        .stSelectbox .st-ce {
-            padding: 0 !important;
-        }
-        .stSelectbox .st-cg,
-        .stSelectbox .st-ch,
-        .stSelectbox .st-ci,
-        .stSelectbox .st-cj {
-            border: none !important;
-        }
-        .stSelectbox .st-b5,
-        .stSelectbox .st-cl {
-            border-radius: 5px !important;
-        }
-        .stSelectbox .st-cn,
-        .stSelectbox .st-co {
-            box-shadow: none !important;
-        }
-        .stSelectbox .st-d2 {
-            transition: all 0.3s !important;
-        }
-        .stSelectbox:hover .st-d2 {
-            transform: rotate(180deg) !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+            .stSelectbox {
+                width: 100%;
+            }
+            .stSelectbox .st-ax,
+            .stSelectbox .st-cq,
+            .stSelectbox .st-d5,
+            .stSelectbox .st-cs,
+            .stSelectbox .st-ay,
+            .stSelectbox .st-ce,
+            .stSelectbox .st-ck {
+                background-color: #1f77b4 !important;
+                color: white !important;
+                border-radius: 5px !important;
+                padding: 5px !important;
+                margin-bottom: 10px !important;
+            }
+            .stSelectbox .st-c7,
+            .stSelectbox .st-cd {
+                color: white !important;
+            }
+            .stSelectbox .st-bs,
+            .stSelectbox .st-d3 {
+                fill: white !important;
+            }
+            .stSelectbox .st-b3,
+            .stSelectbox .st-d0 {
+                border: none !important;
+            }
+            .stSelectbox .st-bf,
+            .stSelectbox .st-ce {
+                padding: 0 !important;
+            }
+            .stSelectbox .st-cg,
+            .stSelectbox .st-ch,
+            .stSelectbox .st-ci,
+            .stSelectbox .st-cj {
+                border: none !important;
+            }
+            .stSelectbox .st-b5,
+            .stSelectbox .st-cl {
+                border-radius: 5px !important;
+            }
+            .stSelectbox .st-cn,
+            .stSelectbox .st-co {
+                box-shadow: none !important;
+            }
+            .stSelectbox .st-d2 {
+                transition: all 0.3s !important;
+            }
+            .stSelectbox:hover .st-d2 {
+                transform: rotate(180deg) !important;
+            }
+            .stSelectbox label {
+                font-family: 'Inter', sans-serif !important;
+                color: #1f77b4 !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
 
 
     
