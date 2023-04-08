@@ -375,52 +375,66 @@ if not LOCAL:
     #Selection of Streams#
 
     if isinstance(streams, list):
+        
+        st.markdown("""
+    <style>
+        .stSelectbox {
+            width: 100%;
+        }
+        .stSelectbox .st-ax,
+        .stSelectbox .st-cq,
+        .stSelectbox .st-d5,
+        .stSelectbox .st-cs,
+        .stSelectbox .st-ay,
+        .stSelectbox .st-ce,
+        .stSelectbox .st-ck {
+            background-color: #007bff !important;
+            color: white !important;
+            border-radius: 5px !important;
+            padding: 5px !important;
+            margin-bottom: 10px !important;
+        }
+        .stSelectbox .st-c7,
+        .stSelectbox .st-cd {
+            color: white !important;
+        }
+        .stSelectbox .st-bs,
+        .stSelectbox .st-d3 {
+            fill: white !important;
+        }
+        .stSelectbox .st-b3,
+        .stSelectbox .st-d0 {
+            border: none !important;
+        }
+        .stSelectbox .st-bf,
+        .stSelectbox .st-ce {
+            padding: 0 !important;
+        }
+        .stSelectbox .st-cg,
+        .stSelectbox .st-ch,
+        .stSelectbox .st-ci,
+        .stSelectbox .st-cj {
+            border: none !important;
+        }
+        .stSelectbox .st-b5,
+        .stSelectbox .st-cl {
+            border-radius: 5px !important;
+        }
+        .stSelectbox .st-cn,
+        .stSelectbox .st-co {
+            box-shadow: none !important;
+        }
+        .stSelectbox .st-d2 {
+            transition: all 0.3s !important;
+        }
+        .stSelectbox:hover .st-d2 {
+            transform: rotate(180deg) !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-        st.markdown(
 
-                        """
-        <style>
-            .speckle-style .select-container {
-                position: relative;
-            }
-
-            .speckle-style .st-b5 {
-                background-color: #007bff;
-                color: white;
-                border-radius: 5px;
-            }
-
-            .speckle-style .st-b5:after {
-                content: "";
-                position: absolute;
-                right: 12px;
-                top: 50%;
-                transform: translateY(-50%);
-                border-width: 5px 5px 0;
-                border-style: solid;
-                border-color: white transparent transparent;
-            }
-        </style>
-        """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown(
-            """
-        <script>
-            function applySpeckleStyleToSelectbox() {
-                const selectboxes = document.querySelectorAll('.st-b5');
-                for (let selectbox of selectboxes) {
-                    const container = selectbox.parentElement;
-                    container.classList.add('speckle-style', 'select-container');
-                }
-            }
-
-            setTimeout(applySpeckleStyleToSelectbox, 500);
-        </script>
-        """,
-            unsafe_allow_html=True,
-        )
+    
         stream_names = ["Select a stream"]
         for aStream in streams:
             stream_names.append(aStream.name)
