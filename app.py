@@ -466,7 +466,7 @@ if not LOCAL:
                 commit_names = ["Select a commit"]
                 for aCommit in commits:
                     commit_names.append(str(aCommit.id) + ": " + aCommit.message)
-                option = col3.selectbox('Select a Commit', (commit_names))
+                option = col3.selectbox('Select a commit', (commit_names))
                 if option != "Select a commit":
                     commit = commits[commit_names.index(option)-1]
 
