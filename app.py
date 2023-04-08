@@ -376,91 +376,107 @@ if not LOCAL:
 
     if isinstance(streams, list):
 
-        streams_html = "".join([f"<li data-id='{stream.id}'>{stream.name}</li>" for stream in streams])
+        streams_data = [{"id": s.id, "name": s.name} for s in streams]
 
-        html_code_streams = """
-                             
-                    <div class="streams-container">
-                        <ul class="streams-list">
-                            {streams_html}
-                        </ul>
-                    </div>
-                
-                    <div class="branches-container"></div>
+        streams_json = json.dumps(streams_data)
 
-                    <div class="commits-container"></div>
+        html_code_streams =  st.markdown(f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speckle Stream Selection</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #007bff;
+            color: white;
+        }}
+        select {{
+            padding: 5px;
+            margin: 10px;
+            background-color: white;
+            color: #007bff;
+        }}
+        iframe {{
+            width: 750px;
+            height: 600px;
+            border: none;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Speckle Stream Selection</h1>
+    <select id="streamSelect">
+        <option>Select a stream</option>
+    </select>
+    <select id="branchSelect" hidden>
+        <option>Select a branch</option>
+    </select>
+    <select id="commitSelect" hidden>
+        <option>Select a commit</option>
+    </select>
+    <div id="iframeContainer"></div>
 
-                    <style>
-                        .streams-container {{
-                            width: 100%;
-                            max-width: 600px;
-                            margin: 0 auto;
-                        }}
+    <script>
+        const streams = {streams_json};
 
-                        .streams-list {{
-                            list-style: none;
-                            padding: 0;
-                            margin: 0;
-                        }}
+        const streamSelect = document.getElementById('streamSelect');
+        const branchSelect = document.getElementById('branchSelect');
+        const commitSelect = document.getElementById('commitSelect');
+        const iframeContainer = document.getElementById('iframeContainer');
 
-                        .streams-list li {{
-                            padding: 20px;
-                            background-color: #1f77b4;
-                            border-radius: 5px;
-                            margin-bottom: 10px;
-                            color: white;
-                            font-weight: bold;
-                            cursor: pointer;
-                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-                        }}
+        function loadStreams() {{
+            streams.forEach(stream => {{
+                const option = document.createElement('option');
+                option.value = stream.id;
+                option.textContent = stream.name;
+                streamSelect.appendChild(option);
+            }});
+        }}
 
-                        .streams-list li:hover {{
-                            background-color: #1a6498;
-                        }}
+        streamSelect.addEventListener('change', async () => {{
+            if (streamSelect.value !== 'Select a stream') {{
+                // Fetch branches and populate branchSelect
+            }} else {{
+                branchSelect.hidden = true;
+            }}
+            commitSelect.hidden = true;
+            iframeContainer.innerHTML = '';
+        }});
 
-                        .branches-list {{
-                            list-style: none;
-                            padding: 0;
-                            margin: 0;
-                        }}
+        branchSelect.addEventListener('change', async () => {{
+            if (branchSelect.value !== 'Select a branch') {{
+                // Fetch commits and populate commitSelect
+            }} else {{
+                commitSelect.hidden = true;
+            }}
+            iframeContainer.innerHTML = '';
+        }});
 
-                        .branches-list li {{
-                            padding: 10px;
-                            background-color: #f2f2f2;
-                            border-radius: 5px;
-                            margin-bottom: 10px;
-                            cursor: pointer;
-                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-                        }}
+        commitSelect.addEventListener('change', () => {{
+            if (commitSelect.value !== 'Select a commit') {{
+                const commitId = commitSelect.value;
+                const streamId = streamSelect.value;
+                const iframeSrc = `https://speckle.xyz/embed?stream=${{streamId}}&commit=${{commitId}}&transparent=true`;
+                const iframe = document.createElement('iframe');
+                iframe.src = iframeSrc;
+                iframe.width = 750;
+                iframe.height = 600;
+                iframe.style.border = 'none';
+                iframeContainer.innerHTML = '';
+                iframeContainer.appendChild(iframe);
+            }} else {{
+                iframeContainer.innerHTML = '';
+            }}
+        }});
 
-                        .branches-list li:hover {{
-                            background-color: #e0e0e0;
-                        }}
-
-                        .commits-list {{
-                            list-style: none;
-                            padding: 0;
-                            margin: 0;
-                        }}
-
-                        .commits-list li {{
-                            padding: 10px;
-                            background-color: #f2f2f2;
-                            border-radius: 5px;
-                            margin-bottom: 10px;
-                            cursor: pointer;
-                            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-                        }}
-
-                        .commits-list li:hover {{
-                            background-color: #e0e0e0;
-                        }}
-                    </style>
-        """
-        html_code_streams= html_code_streams.replace("{streams_html}", streams_html)
-        for stream in streams:
-            html_code_streams= html_code_streams.replace("{streamId}", stream.id)
-        st.markdown(html_code_streams,unsafe_allow_html=True)
+        loadStreams();
+    </script>
+</body>
+</html>
+""", unsafe_allow_html=True)
 
 
         stream_names = ["Select a stream"]
