@@ -393,7 +393,7 @@ if not LOCAL:
         ]
         streams_json = json.dumps(streams_data)
 
-        st.markdown(f"""
+        html_code_streams = (f"""
         <style>
             .speckle-container {{
                 font-family: Arial, sans-serif;
@@ -514,10 +514,10 @@ if not LOCAL:
 
         loadStreams();
     </script>
-    """, unsafe_allow_html=True)
+    """)
 
 
-
+        st.markdown(html_code_streams,unsafe_allow_html=True)
 
         stream_names = ["Select a stream"]
         for aStream in streams:
