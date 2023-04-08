@@ -376,107 +376,147 @@ if not LOCAL:
 
     if isinstance(streams, list):
 
-        streams_data = [{"id": s.id, "name": s.name} for s in streams]
-
+        streams_data = [
+            {
+                "id": s.id,
+                "name": s.name,
+                "branches": [
+                    {
+                        "id": b.id,
+                        "name": b.name,
+                        "commits": [{"id": c.id, "message": c.message} for c in getCommits(b)],
+                    }
+                    for b in getBranches([client, s])
+                ],
+            }
+            for s in streams
+        ]
         streams_json = json.dumps(streams_data)
 
-        html_code_streams =  st.markdown(f"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speckle Stream Selection</title>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            background-color: #007bff;
-            color: white;
-        }}
-        select {{
-            padding: 5px;
-            margin: 10px;
-            background-color: white;
-            color: #007bff;
-        }}
-        iframe {{
-            width: 750px;
-            height: 600px;
-            border: none;
-        }}
-    </style>
-</head>
-<body>
-    <h1>Speckle Stream Selection</h1>
-    <select id="streamSelect">
-        <option>Select a stream</option>
-    </select>
-    <select id="branchSelect" hidden>
-        <option>Select a branch</option>
-    </select>
-    <select id="commitSelect" hidden>
-        <option>Select a commit</option>
-    </select>
-    <div id="iframeContainer"></div>
-
-    <script>
-        const streams = {streams_json};
-
-        const streamSelect = document.getElementById('streamSelect');
-        const branchSelect = document.getElementById('branchSelect');
-        const commitSelect = document.getElementById('commitSelect');
-        const iframeContainer = document.getElementById('iframeContainer');
-
-        function loadStreams() {{
-            streams.forEach(stream => {{
-                const option = document.createElement('option');
-                option.value = stream.id;
-                option.textContent = stream.name;
-                streamSelect.appendChild(option);
-            }});
-        }}
-
-        streamSelect.addEventListener('change', async () => {{
-            if (streamSelect.value !== 'Select a stream') {{
-                // Fetch branches and populate branchSelect
-            }} else {{
-                branchSelect.hidden = true;
+        st.markdown(f"""
+        <style>
+            .speckle-container {{
+                font-family: Arial, sans-serif;
+                background-color: #007bff;
+                color: white;
+                padding: 1rem;
+                border-radius: 5px;
             }}
-            commitSelect.hidden = true;
-            iframeContainer.innerHTML = '';
-        }});
 
-        branchSelect.addEventListener('change', async () => {{
+            .speckle-label {{
+                display: block;
+                margin-bottom: 5px;
+            }}
+
+            .speckle-select {{
+                padding: 5px;
+                margin-bottom: 10px;
+                background-color: white;
+                color: #007bff;
+                width: 100%;
+                box-sizing: border-box;
+                border-radius: 5px;
+            }}
+        </style>
+        <div class="speckle-container">
+            <h2>Speckle Stream Selection</h2>
+            <label for="streamSelect" class="speckle-label">Select a Stream:</label>
+            <select id="streamSelect" class="speckle-select">
+                <option>Select a stream</option>
+            </select>
+            <label for="branchSelect" class="speckle-label">Select a Branch:</label>
+            <select id="branchSelect" class="speckle-select" hidden>
+                <option>Select a branch</option>
+            </select>
+            <label for="commitSelect" class="speckle-label">Select a Commit:</label>
+            <select id="commitSelect" class="speckle-select" hidden>
+                <option>Select a commit</option>
+            </select>
+        </div>
+        <script>
+            const streams = {streams_json};
+
+            const streamSelect = document.getElementById('streamSelect');
+            const branchSelect = document.getElementById('branchSelect');
+            const commitSelect = document.getElementById('commitSelect');
+
+            function loadStreams() {{
+                streams.forEach(stream => {{
+                    const option = document.createElement('option');
+                    option.value = stream.id;
+                    option.textContent = stream.name;
+                    streamSelect.appendChild(option);
+                }});
+            }}
+
+            async function fetchBranches(streamId) {{
+                const stream = streams.find(s => s.id === streamId);
+                return stream ? stream.branches : [];
+            }}
+
+            async function fetchCommits(branchId) {{
+                for (const stream of streams) {{
+                    for (const branch of stream.branches) {{
+                        if (branch.id === branchId) {{
+                            return branch.commits;
+                        }}
+                    }}
+                }}
+                return [];
+            }}
+
+            streamSelect.addEventListener('change', async () => {{
+                if (streamSelect.value !== 'Select a stream') {{
+                    let streamId = streamSelect.value;
+                    const branches = await fetchBranches(streamId);
+
+                    branchSelect.innerHTML = '<option>Select a branch</option>';
+                    branches.forEach(branch => {{
+                        const option = document.createElement('option');
+                        option.value = branch.id;
+                        option.textContent = branch.name;
+                        branchSelect.appendChild(option);
+                    }});
+
+                    branchSelect.hidden = false;
+                }} else {{
+                    branchSelect.hidden = true;
+                }}
+                commitSelect.hidden = true;
+            }});
+
+            branchSelect.addEventListener('change', async () => {{
             if (branchSelect.value !== 'Select a branch') {{
-                // Fetch commits and populate commitSelect
+                let branchId = branchSelect.value;
+                const commits = await fetchCommits(branchId);
+
+                commitSelect.innerHTML = '<option>Select a commit</option>';
+                commits.forEach(commit => {{
+                    const option = document.createElement('option');
+                    option.value = commit.id;
+                    option.textContent = commit.id + ': ' + commit.message;
+                    commitSelect.appendChild(option);
+                }});
+
+                commitSelect.hidden = false;
             }} else {{
                 commitSelect.hidden = true;
             }}
-            iframeContainer.innerHTML = '';
         }});
 
+        // Handle the commit selection if needed
         commitSelect.addEventListener('change', () => {{
             if (commitSelect.value !== 'Select a commit') {{
-                const commitId = commitSelect.value;
-                const streamId = streamSelect.value;
-                const iframeSrc = `https://speckle.xyz/embed?stream=${{streamId}}&commit=${{commitId}}&transparent=true`;
-                const iframe = document.createElement('iframe');
-                iframe.src = iframeSrc;
-                iframe.width = 750;
-                iframe.height = 600;
-                iframe.style.border = 'none';
-                iframeContainer.innerHTML = '';
-                iframeContainer.appendChild(iframe);
-            }} else {{
-                iframeContainer.innerHTML = '';
+                let commitId = commitSelect.value;
+                // Do something with the commitId, e.g., load data or trigger an action
             }}
         }});
 
         loadStreams();
     </script>
-</body>
-</html>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+
 
 
         stream_names = ["Select a stream"]
