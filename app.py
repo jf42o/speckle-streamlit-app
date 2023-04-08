@@ -567,6 +567,7 @@ if not LOCAL:
 
                     #change host, if not the public speckle.xyz"
                     commit_url = "https://speckle.xyz/streams/" + stream.id + "/commits/" + commit.id
+                    st.write(commit_url)
 
                     def commit_url_to_speckle_url(commit_url):
                         # Extract stream id and commit id from the commit url
@@ -582,8 +583,8 @@ if not LOCAL:
                     wrapper = StreamWrapper(commit_url)
 
                     client = wrapper.get_client()
-                    #account = get_default_account()
-                    #client.authenticate_with_account(account)
+                    account = get_default_account()
+                    client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
                         st.session_state['parsed_model_data'] = None
