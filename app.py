@@ -440,22 +440,12 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-    js_code = ("""
-        window.innerWidth
-    """)
-
-    st.write(st_javascript(js_code=js_code))
+    js_code = ("""window.innerWidth""")
+    width = st_javascript(js_code)
+    st.markdown(width)
 
     query_params = st.experimental_get_query_params()
 
-    if "page" in query_params:
-        st.session_state.current_page = query_params["page"][0]
-    else:
-        st.session_state.current_page = ""
-    
-    if st.session_state.current_page == "data":
-            switch_page("Data")
-    
     if isinstance(streams, list):
 
         st.markdown("""
