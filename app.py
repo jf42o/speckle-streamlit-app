@@ -442,20 +442,24 @@ if not LOCAL:
    
     js = st_javascript("""
 
-        function getDataPageOnClick() {
-            const navLinks = document.querySelectorAll(".nav-links a");
+    function getDataPageOnClick() {
+        const navLinks = document.querySelectorAll(".nav-links a");
 
-            navLinks.forEach(link => {
-                link.addEventListener("click", event => {
-                    event.preventDefault();
-                    const dataPage = event.currentTarget.getAttribute("data-page");
-                    console.log("Clicked link with data-page:", dataPage);
-                    // You can now use the dataPage value
-                });
+        navLinks.forEach(link => {
+            link.addEventListener("click", event => {
+                event.preventDefault();
+                const dataPage = event.currentTarget.getAttribute("data-page");
+
+                // Update the URL with the data-page value
+                const url = new URL(window.location.href);
+                url.searchParams.set("data_page", dataPage);
+                window.history.pushState({}, "", url);
             });
-        }
+        });
+    }
 
     getDataPageOnClick();
+    
     """)
 
     st.write(js)
