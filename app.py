@@ -421,59 +421,49 @@ if not LOCAL:
     #Selection of Streams#
 
     navbar_html = """
-        <div class="fixed-nav">
-            <div class="left-container">
-                <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-                <h1>SpeckleLit</h1>
-            </div>
-            <div class="center-container"></div>
-            <div class="right-container">
-                <div class="nav-links">
-                    <a href="#" data-button="home">Home</a>
-                    <a href="#" data-button="data">Data</a>
-                    <a href="#" data-button="about">About</a>
-                </div>
+    <div class="fixed-nav">
+        <div class="left-container">
+            <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+            <h1>SpeckleLit</h1>
+        </div>
+        <div class="center-container"></div>
+        <div class="right-container">
+            <div class="nav-links">
+                <a href="#" data-page="home">Home</a>
+                <a href="#" data-page="data">Data</a>
+                <a href="#" data-page="about">About</a>
             </div>
         </div>
-        <script>
-            function handleClick(event) {
-                event.preventDefault();
-                let button_id = event.target.getAttribute("data-button");
-                if (button_id) {
-                    let button = window.parent.document.querySelector('#' + button_id);
-                    if (button) {
-                        button.click();
-                    }
-                }
+    </div>
+    <script>
+        function handleClick(event) {
+            event.preventDefault();
+            let page_name = event.target.getAttribute("data-page");
+            if (page_name) {
+                let current_url = new URL(window.location.href);
+                current_url.searchParams.set("page", page_name);
+                window.location.href = current_url.toString();
             }
+        }
 
-            const links = document.querySelectorAll(".nav-links a");
-            for (let i = 0; i < links.length; i++) {
-                links[i].addEventListener("click", handleClick);
-            }
-        </script>
-        """
+        const links = document.querySelectorAll(".nav-links a");
+        for (let i = 0; i < links.length; i++) {
+            links[i].addEventListener("click", handleClick);
+        }
+    </script>
+    """
 
     st.markdown(navbar_html, unsafe_allow_html=True)
 
-    st.session_state.current_page = ""
-
-    home_clicked = st.button("Home", key="home", on_click=lambda: st.session_state.update({"current_page": "Home"}))
-    data_clicked = st.button("Data", key="data", on_click=lambda: st.session_state.update({"current_page": "Data"}))
-    about_clicked = st.button("About", key="about", on_click=lambda: st.session_state.update({"current_page": "About"}))
-
-    st.markdown("""
-        <style>
-        button.css-nnhwp2 {
-            visibility: hidden;
-            position: absolute;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-    if st.session_state.current_page == "Data":
+    query_params = st.experimental_get_query_params()
+    if "page" in query_params:
+        st.session_state.current_page = query_params["page"][0]
+    else:
+        st.session_state.current_page = ""
+    
+    if st.session_state.current_page == "data":
             switch_page("Data")
-
+    
     if isinstance(streams, list):
 
         st.markdown("""
