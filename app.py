@@ -457,7 +457,7 @@ if not LOCAL:
     st.markdown(navbar_html, unsafe_allow_html=True)
 
     st.session_state.current_page = ""
-    
+
     home_clicked = st.button("Home", key="home", on_click=lambda: st.session_state.update({"current_page": "Home"}))
     data_clicked = st.button("Data", key="data", on_click=lambda: st.session_state.update({"current_page": "Data"}))
     about_clicked = st.button("About", key="about", on_click=lambda: st.session_state.update({"current_page": "About"}))
@@ -589,6 +589,10 @@ if not LOCAL:
                     col1, col2 = st.columns(2)
 
                     with col1:
+                        
+                        if st.session_state.current_page == "Data":
+                            switch_page("Data")
+
 
                         categories = ["@Wände", "@Geschossdecken"]
                         params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
