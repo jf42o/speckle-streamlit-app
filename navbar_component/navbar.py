@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit.components.v1 import declare_component, html
 
-def Navbar(access_code: str, key=None):
+def Navbar(access_code: str):
     component_value = html(
         """
         <div class="fixed-nav">
@@ -33,7 +33,6 @@ def Navbar(access_code: str, key=None):
         """,
         width=None,
         height=None,
-        scrolling=False,
-        key=key,
+        scrolling=False
     )
     return component_value
