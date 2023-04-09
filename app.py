@@ -442,37 +442,22 @@ if not LOCAL:
    
     js = st_javascript("""
 
-            <div class="fixed-nav">
-            <div class="left-container">
-                <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-                <h1>SpeckleLit</h1>
-            </div>
-            <div class="center-container"></div>
-            <div class="right-container">
-                <div class="nav-links">
-                    <a href="#" data-page="home">Home</a>
-                    <a href="#" data-page="data">Data</a>
-                    <a href="#" data-page="about">About</a>
-                </div>
-            </div>
-        </div>
-        
-        function getDataPageOnClick() {
+      function getDataPageOnClick() {
         return new Promise((resolve) => {
             const navLinks = document.querySelectorAll(".nav-links a");
 
             const onClickHandler = (event) => {
-            event.preventDefault();
-            const dataPage = event.target.getAttribute("data-page");
-            resolve(dataPage);
+                event.preventDefault();
+                const dataPage = event.target.getAttribute("data-page");
+                resolve(dataPage);
             };
 
             navLinks.forEach((link) => {
-            link.addEventListener("click", onClickHandler);
+                link.addEventListener("click", onClickHandler);
             });
         });
-        }
-    getDataPageOnClick()
+    }
+    getDataPageOnClick();
     """)
 
     st.write(js)
