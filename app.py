@@ -440,7 +440,7 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-    st.markdown(st_javascript()"""window.innerWidth"""))
+    st.markdown(st_javascript("""window.innerWidth"""))
     query_params = st.experimental_get_query_params()
     st.write(query_params)
     if "page" in query_params:
