@@ -17,7 +17,7 @@ from specklepy.api import operations
 from streamlit_extras.switch_page_button import switch_page
 from specklepy.api.credentials import get_default_account
 from streamlit_javascript import st_javascript
-
+import streamlit.components.v1 as components
 
 #toggle between local / redirection from speckleserver to app
 LOCAL = False
@@ -139,11 +139,18 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 #Hide the Sidebar
-
 st.markdown("""
     <style>
         section[data-testid="stSidebar"] {
            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] {
+
         }
     </style>
 """, unsafe_allow_html=True)
@@ -441,15 +448,38 @@ if not LOCAL:
   <div class="center-container"></div>
   <div class="right-container">
     <div class="nav-links">
-      <a target="_self" href="specklelit.streamlit.app/" data-page="home">Home</a>
-      <a target="_self" href="specklelit.streamlit.app/Data?access_code={access_code}" data-page="data">Data</a>
-      <a target="_self" href="specklelit.streamlit.app/About?access_code={access_code}" data-page="about">About</a>
+        <a href="#" class="nav-link" data-page="page1">Home</a>
+        <a href="specklelit.streamlit.app/Data" class="nav-link" data-page="page2">Data</a>
+        <a href="specklelit.streamlit.app/About" class="nav-link" data-page="page3">About</a>
+    </div>
     </div>
   </div>
 </div>
     """
     st.markdown(navbar_html, unsafe_allow_html=True)    
 
+    js_code = """<script>
+            // Select all elements with the class "nav-link"
+            const navLinks = window.parent.document.querySelectorAll('.nav-links a');
+            console.log(navLinks)
+            // Function to handle click event
+            function handleClick(event) {
+            // Get the "data-page" attribute from the clicked element
+            const dataPage = event.target.getAttribute('data-page');
+            
+            // Log the retrieved value
+            console.log('Clicked nav-link, data-page:', dataPage);
+            }
+
+            // Loop through each element and add the click event listener
+            navLinks.forEach(navLink => {
+            navLink.addEventListener('click', handleClick);
+            });
+        </script>
+    """
+
+    res = components.html(js_code)
+    st.markdown(res)
     query_params = st.experimental_get_query_params()
 
     if isinstance(streams, list):
