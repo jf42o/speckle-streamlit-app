@@ -444,8 +444,7 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
     
-    val = mycomponent()
-    st.write(val)
+    
     query_params = st.experimental_get_query_params()
 
     if isinstance(streams, list):
