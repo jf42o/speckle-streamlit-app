@@ -624,7 +624,8 @@ if not LOCAL:
                         if st.button("Commit Changes"):
                             edited_data = grid_return_filtered["data"]
                             updated = update_speckle_model(edited_data, commit_data, categories, params_to_search, upd=UPDATE)
-                            new_object_id = operations.send(base=updated, transports=wrapper.get_transport())
+                            transport = ServerTransport(stream.id, client)
+                            new_object_id = operations.send(base=updated, transports=transport)
 
                             # Create a new commit on the stream with the updated object
                             new_commit_id = client.commit.create(
