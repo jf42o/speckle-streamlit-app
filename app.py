@@ -466,8 +466,7 @@ if not LOCAL:
         }""")
     st.write(js_return)
 
-    url_updater = """
-    <script>
+    url_updater = st_javascript("""
         function receiveMessage(event) {
             if (event.data && event.data.page) {
                 let current_url = new URL(window.location.href);
@@ -477,11 +476,10 @@ if not LOCAL:
         }
 
         window.addEventListener("message", receiveMessage, false);
-    </script>
-    """
-    st.markdown(navbar_html, unsafe_allow_html=True)    
-    st.markdown(url_updater, unsafe_allow_html=True)
+    """)
 
+    st.markdown(navbar_html, unsafe_allow_html=True)    
+   
 
     query_params = st.experimental_get_query_params()
     st.write(query_params)
