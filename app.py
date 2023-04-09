@@ -441,28 +441,18 @@ if not LOCAL:
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
     js = st_javascript("""
-
-    function getDataPageOnClick() {
-        const navLinks = document.querySelectorAll(".nav-links a");
-
-        navLinks.forEach(link => {
-            link.addEventListener("click", event => {
-                event.preventDefault();
-                const dataPage = event.currentTarget.getAttribute("data-page");
-
-                // Update the URL with the data-page value
-                const url = new URL(window.location.href);
-                url.searchParams.set("data_page", dataPage);
-                window.history.pushState({}, "", url);
-            });
-        });
-    }
-
-    getDataPageOnClick();
-
+   
+        function getAllElements() {
+        const allElements = document.getElementsByTagName('*');
+        return allElements;
+        }
+    
+    const elements = getAllElements();
+    console.log(elements)
     """)
 
     st.write(js)
+
     query_params = st.experimental_get_query_params()
     st.write(query_params)
     if "page" in query_params:
