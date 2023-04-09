@@ -436,51 +436,11 @@ if not LOCAL:
             </div>
         </div>
     </div>
-    <script>
-        function handleClick(event) {
-            event.preventDefault();
-            let page_name = event.target.getAttribute("data-page");
-            if (page_name) {
-                window.parent.postMessage({"page": page_name}, "*");
-            }
-        }
-
-        const links = document.querySelectorAll(".nav-links a");
-        for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener("click", handleClick);
-        }
-    </script>
     """
-    js_return = st_javascript("""
-    function handleClick(event) {
-            event.preventDefault();
-            let page_name = event.target.getAttribute("data-page");
-            if (page_name) {
-                window.parent.postMessage({"page": page_name}, "*");
-            }
-        }
-
-        const links = document.querySelectorAll(".nav-links a");
-        for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener("click", handleClick);
-        }""")
-    st.write(js_return)
-
-    url_updater = st_javascript("""
-        function receiveMessage(event) {
-            if (event.data && event.data.page) {
-                let current_url = new URL(window.location.href);
-                current_url.searchParams.set("page", event.data.page);
-                window.location.href = current_url.toString();
-            }
-        }
-
-        window.addEventListener("message", receiveMessage, false);
-    """)
-
+    
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-
+    st.markdown(st_javascript()"""window.innerWidth"""))
     query_params = st.experimental_get_query_params()
     st.write(query_params)
     if "page" in query_params:
