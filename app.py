@@ -548,12 +548,6 @@ if not LOCAL:
                     
                     speckle_url = commit_url_to_speckle_url(commit_url)
                     commit_data = getObject(client,stream,commit)
-                    st.write(commit_data)
-                    #wrapper = StreamWrapper(commit_url)
-
-                    #client = wrapper.get_client()
-                    #account = get_default_account()
-                    #client.authenticate_with_account(account)
 
                     if 'parsed_model_data' not in st.session_state:
                         st.session_state['parsed_model_data'] = None
@@ -561,10 +555,6 @@ if not LOCAL:
                     col1, col2 = st.columns(2)
 
                     with col1:
-
-                        #commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
-                        #obj_id = commit.referencedObject
-                        #commit_data = operations.receive(obj_id, wrapper.get_transport())
 
                         categories = ["@Wände", "@Geschossdecken"]
                         params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
@@ -633,7 +623,7 @@ if not LOCAL:
 
                             # Create a new commit on the stream with the updated object
                             new_commit_id = client.commit.create(
-                                stream_id=wrapper.stream_id,
+                                stream_id=stream.id,
                                 object_id=new_object_id,
                                 message="Updated parameter values using SpeckleLit",
                             )
