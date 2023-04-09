@@ -144,7 +144,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.markdown("""
     <style>
         section[data-testid="stSidebar"] {
-           display: none;
+    
         }
     </style>
 """, unsafe_allow_html=True)
@@ -434,21 +434,14 @@ if not LOCAL:
   <div class="center-container"></div>
   <div class="right-container">
     <div class="nav-links">
-      <a href="#" data-page="home">Home</a>
-      <a data-page="data">Data</a>
-      <a href="#" data-page="about">About</a>
+      <a href="specklelit.streamlit.app/" data-page="home">Home</a>
+      <a href="specklelit.streamlit.app/Data" data-page="data">Data</a>
+      <a href="specklelit.streamlit.app/About" data-page="about">About</a>
     </div>
   </div>
 </div>
     """
     st.markdown(navbar_html, unsafe_allow_html=True)    
-
-    js_code = """
-    const navLinks = document.querySelectorAll("nav-links");
-    """
-
-    return_value = st_javascript(js_code)
-    st.markdown(f"Return value was: {return_value}")
 
     query_params = st.experimental_get_query_params()
 
