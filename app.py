@@ -421,7 +421,7 @@ if not LOCAL:
     
     #Selection of Streams#
 
-    st.markdown(f"""
+    navbar_html = """
         <div class="fixed-nav">
             <div class="left-container">
                 <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
@@ -430,15 +430,47 @@ if not LOCAL:
             <div class="center-container"></div>
             <div class="right-container">
                 <div class="nav-links">
-                    <a href=specklelit.streamlit.app/?access_code={access_code}" target="_self">Home</a>
-                    <a href="specklelit.streamlit.app/Data?access_code={access_code}" target="_self">Data</a>
-                    <a href="specklelit.streamlit.app/About?access_code={access_code}" target="_self">About</a>
+                    <a href="#" data-button="home">Home</a>
+                    <a href="#" data-button="data">Data</a>
+                    <a href="#" data-button="about">About</a>
                 </div>
             </div>
         </div>
+        <script>
+            function handleClick(event) {
+                event.preventDefault();
+                let button_id = event.target.getAttribute("data-button");
+                if (button_id) {
+                    let button = window.parent.document.querySelector('#' + button_id);
+                    if (button) {
+                        button.click();
+                    }
+                }
+            }
 
-        """,unsafe_allow_html=True)
+            const links = document.querySelectorAll(".nav-links a");
+            for (let i = 0; i < links.length; i++) {
+                links[i].addEventListener("click", handleClick);
+            }
+        </script>
+        """
+
+    st.markdown(navbar_html, unsafe_allow_html=True)
+
     
+    home_clicked = st.button("Home", key="home", on_click=lambda: st.session_state.update({"current_page": "Home"}))
+    data_clicked = st.button("Data", key="data", on_click=lambda: st.session_state.update({"current_page": "Data"}))
+    about_clicked = st.button("About", key="about", on_click=lambda: st.session_state.update({"current_page": "About"}))
+    
+    st.markdown("""
+        <style>
+        button[id^="streamlit-button-"] {
+            visibility: hidden;
+            position: absolute;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
     if isinstance(streams, list):
 
         st.markdown("""
