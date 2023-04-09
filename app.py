@@ -348,8 +348,8 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     <div class="center-container"></div>
     <div class="right-container">
         <div class="nav-links">
-            <a href="https://specklelit.streamlit.app/Data">Data</a>
-            <a href="https://specklelit.streamlit.app/About">About</a>
+            <a href="/Data" target="_self">Data</a>
+            <a href="/About" target="_self">About</a>
         </div>
     </div>
 </div>
@@ -391,7 +391,7 @@ if not LOCAL:
             html_code = (f"""
                         <div class="container">
                             <button class="custom-login-button">
-                                <a href="{verify_url}" target="_blank" style="color: inherit; text-decoration: none;">
+                                <a href="{verify_url}" style="color: inherit; text-decoration: none;">
                                     <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
                                     Login to Speckle
                                 </a>
@@ -640,7 +640,7 @@ if not LOCAL:
 
 
 
-                    
+
 else:
     col1, col2 = st.columns(2)
 
