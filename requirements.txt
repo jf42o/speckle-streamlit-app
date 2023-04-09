@@ -3,3 +3,4 @@ streamlit
 specklepy
 pandas
 streamlit-aggrid
+streamlit-extras
