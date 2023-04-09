@@ -444,7 +444,13 @@ if not LOCAL:
    
     js_code = ("""
     
-    const navLinks = document.querySelectorAll(".nav-links");
+        function printDomElements() {
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(element => {
+                console.log(element);
+            });
+        }
+        printDomElements();
 
     """)
 
