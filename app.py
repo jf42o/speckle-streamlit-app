@@ -18,6 +18,7 @@ from streamlit_extras.switch_page_button import switch_page
 from specklepy.api.credentials import get_default_account
 from streamlit_javascript import st_javascript
 from streamlit.components.v1 import html
+from mycomponent import mycomponent
 
 #toggle between local / redirection from speckleserver to app
 LOCAL = False
@@ -442,12 +443,9 @@ if not LOCAL:
     """
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
-   
-    my_js = """
-        alert("Hi")
-    """
-    html(f"<script>{my_js}</script>")
-
+    
+    val = mycomponent()
+    st.write(val)
     query_params = st.experimental_get_query_params()
 
     if isinstance(streams, list):
