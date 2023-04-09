@@ -434,9 +434,9 @@ if not LOCAL:
   <div class="center-container"></div>
   <div class="right-container">
     <div class="nav-links">
-      <a href="specklelit.streamlit.app/" data-page="home">Home</a>
-      <a href="specklelit.streamlit.app/Data" data-page="data">Data</a>
-      <a href="specklelit.streamlit.app/About" data-page="about">About</a>
+      <a target="_self" href="specklelit.streamlit.app/" data-page="home">Home</a>
+      <a target="_self" href="specklelit.streamlit.app/Data" data-page="data">Data</a>
+      <a target="_self" href="specklelit.streamlit.app/About" data-page="about">About</a>
     </div>
   </div>
 </div>
