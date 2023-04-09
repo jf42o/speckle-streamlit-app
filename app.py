@@ -456,6 +456,7 @@ if not LOCAL:
 
     st.markdown(navbar_html, unsafe_allow_html=True)
 
+    st.session_state.current_page = ""
     
     home_clicked = st.button("Home", key="home", on_click=lambda: st.session_state.update({"current_page": "Home"}))
     data_clicked = st.button("Data", key="data", on_click=lambda: st.session_state.update({"current_page": "Data"}))
