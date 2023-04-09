@@ -3,7 +3,6 @@ import requests
 import streamlit as st
 import pandas as pd
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
-from navbar_component import Navbar
 from specklepy.api.client import SpeckleClient
 from specklepy.api.credentials import get_account_from_token
 from specklepy.transports.memory import MemoryTransport
@@ -15,7 +14,7 @@ from specklepy.objects.geometry import *
 from specklepy.logging.exceptions import SpeckleException
 from specklepy.objects.other import RenderMaterial
 from specklepy.api import operations
-
+from streamlit_extras.switch_page_button import switch_page
 from specklepy.api.credentials import get_default_account
 
 #toggle between local / redirection from speckleserver to app
@@ -464,12 +463,15 @@ if not LOCAL:
 
     st.markdown("""
         <style>
-        button..css-nnhwp2 {
+        button.css-nnhwp2 {
             visibility: hidden;
             position: absolute;
         }
         </style>
         """, unsafe_allow_html=True)
+
+    if st.session_state.current_page == "Data":
+            switch_page("Data")
 
     if isinstance(streams, list):
 
