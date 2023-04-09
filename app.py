@@ -16,6 +16,7 @@ from specklepy.objects.other import RenderMaterial
 from specklepy.api import operations
 from streamlit_extras.switch_page_button import switch_page
 from specklepy.api.credentials import get_default_account
+from streamlit_javascript import st_javascript
 
 #toggle between local / redirection from speckleserver to app
 LOCAL = False
@@ -450,6 +451,21 @@ if not LOCAL:
         }
     </script>
     """
+    js_return = st_javascript("""
+    function handleClick(event) {
+            event.preventDefault();
+            let page_name = event.target.getAttribute("data-page");
+            if (page_name) {
+                window.parent.postMessage({"page": page_name}, "*");
+            }
+        }
+
+        const links = document.querySelectorAll(".nav-links a");
+        for (let i = 0; i < links.length; i++) {
+            links[i].addEventListener("click", handleClick);
+        }""")
+    st.write(js_return)
+
     url_updater = """
     <script>
         function receiveMessage(event) {
