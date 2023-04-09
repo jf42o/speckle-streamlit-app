@@ -442,9 +442,7 @@ if not LOCAL:
    
     js_code = ("""
     
-  const allElements = document.getElementsByTagName('*');
-const elementTagNames = Array.from(allElements).map((element) => element.tagName);
-console.log(elementTagNames);
+    const navLinks = document.querySelectorAll(".nav-links a");
     
     """)
 
