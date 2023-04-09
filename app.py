@@ -442,8 +442,8 @@ if not LOCAL:
    
     js_code = ("""
     
-    const navLinks = document.querySelectorAll(".nav-links a");
-    
+    const navLinks = document.querySelectorAll(".nav-links");
+
     """)
 
     width = st_javascript(js_code)
