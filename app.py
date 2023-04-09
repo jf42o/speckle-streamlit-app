@@ -440,7 +440,7 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-    st.markdown(st_javascript("""
+    js = st_javascript("""
         function getDataPageOnClick() {
         return new Promise((resolve) => {
             const navLinks = document.querySelectorAll(".nav-links a");
@@ -457,9 +457,10 @@ if not LOCAL:
         });
         }
     getDataPageOnClick()
-    """))
+    """)
+
+    st.write(js)
     query_params = st.experimental_get_query_params()
-    st.write(query_params)
     if "page" in query_params:
         st.write(query_params["page"][0])
         st.session_state.current_page = query_params["page"][0]
