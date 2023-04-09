@@ -1,9 +1,5 @@
 #IMPORT LIBRARIES
 import requests
-import random
-import math
-import json
-import string
 import streamlit as st
 import pandas as pd
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
@@ -21,6 +17,12 @@ from specklepy.objects.other import RenderMaterial
 from specklepy.api import operations
 
 from specklepy.api.credentials import get_default_account
+
+st.session_state["parsed_model_data"] = "parsed"
+
+#toggle between local / redirection from speckleserver to app
+LOCAL = False
+UPDATE = True
 
 
 def getBranches(item):
@@ -41,13 +43,6 @@ def getObject(client, stream, commit):
     transport = ServerTransport(stream.id, client)
     last_obj_id = commit.referencedObject
     return operations.receive(obj_id=last_obj_id, remote_transport=transport)
-
-
-#------------------------------------------------------------------------------------------------------#
-
-#toggle between local / redirection from speckleserver to app
-LOCAL = False
-UPDATE = True
 
 def parse_and_update_model(commit_data, categories, params_to_search):
     result = []
