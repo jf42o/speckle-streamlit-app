@@ -4,7 +4,6 @@ import streamlit as st
 import pandas as pd
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
 from navbar_component import Navbar
-from streamlit_extras.switch_page_button import switch_page
 from specklepy.api.client import SpeckleClient
 from specklepy.api.credentials import get_account_from_token
 from specklepy.transports.memory import MemoryTransport
@@ -422,18 +421,24 @@ if not LOCAL:
     
     #Selection of Streams#
 
-    clicked_page = Navbar(access_code)
-    if clicked_page:
-        st.session_state.current_page = clicked_page
+    st.markdown(f"""
+        <div class="fixed-nav">
+            <div class="left-container">
+                <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+                <h1>SpeckleLit</h1>
+            </div>
+            <div class="center-container"></div>
+            <div class="right-container">
+                <div class="nav-links">
+                    <a href=specklelit.streamlit.app/?access_code={access_code}" target="_self">Home</a>
+                    <a href="specklelit.streamlit.app/Data?access_code={access_code}" target="_self">Data</a>
+                    <a href="specklelit.streamlit.app/About?access_code={access_code}" target="_self">About</a>
+                </div>
+            </div>
+        </div>
+
+        """,unsafe_allow_html=True)
     
-    if "current_page" not in st.session_state:
-        st.session_state.current_page = ""
-    
-    if st.session_state.current_page == "Data":
-        switch_page("Data")
-    elif st.session_state.current_page == "About":
-        switch_page("About")
-        
     if isinstance(streams, list):
 
         st.markdown("""
