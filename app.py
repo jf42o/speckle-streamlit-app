@@ -478,7 +478,7 @@ if not LOCAL:
         </script>
     """
 
-    res = components.html(js_code)
+    #res = components.html(js_code)
     query_params = st.experimental_get_query_params()
 
     if isinstance(streams, list):
