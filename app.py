@@ -440,7 +440,7 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-    js = st_javascript("""
+    js_code = ("""
    
         function getAllElements() {
         const allElements = document.getElementsByTagName('*');
@@ -451,7 +451,7 @@ if not LOCAL:
     console.log(elements)
     """)
 
-    st.write(js)
+    st.write(st_javascript(js_code=js_code))
 
     query_params = st.experimental_get_query_params()
     st.write(query_params)
