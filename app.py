@@ -426,25 +426,29 @@ if not LOCAL:
     #Selection of Streams#
 
     navbar_html = """
-    <div class="fixed-nav">
-        <div class="left-container">
-            <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-            <h1>SpeckleLit</h1>
-        </div>
-        <div class="center-container"></div>
-        <div class="right-container">
-            <div class="nav-links">
-                <a href="#" data-page="home">Home</a>
-                <a href="#" data-page="data">Data</a>
-                <a href="#" data-page="about">About</a>
-            </div>
-        </div>
+<div class="fixed-nav">
+  <div class="left-container">
+    <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+    <h1>SpeckleLit</h1>
+  </div>
+  <div class="center-container"></div>
+  <div class="right-container">
+    <div class="nav-links">
+      <a href="#" data-page="home">Home</a>
+      <a data-page="data">Data</a>
+      <a href="#" data-page="about">About</a>
     </div>
+  </div>
+</div>
     """
-    
     st.markdown(navbar_html, unsafe_allow_html=True)    
-    
-    
+
+    js_code = """await fetch("https://reqres.in/api/products/3")
+    .then(function(response) {return response.json();})"""
+
+    return_value = st_javascript(js_code)
+    st.markdown(f"Return value was: {return_value}")
+
     query_params = st.experimental_get_query_params()
 
     if isinstance(streams, list):
@@ -562,10 +566,6 @@ if not LOCAL:
                     col1, col2 = st.columns(2)
 
                     with col1:
-                        
-                        if st.session_state.current_page == "Data":
-                            switch_page("Data")
-
 
                         categories = ["@Wände", "@Geschossdecken"]
                         params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
