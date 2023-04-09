@@ -440,7 +440,22 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-    st.markdown(st_javascript("""window.innerWidth"""))
+    st.markdown(st_javascript("""
+        document.addEventListener("DOMContentLoaded", function() {
+        const navLinks = document.querySelectorAll(".nav-links a");
+
+        navLinks.forEach(link => {
+            link.addEventListener("click", event => {
+                event.preventDefault();
+                const dataPage = event.target.getAttribute("data-page");
+                return dataPage
+                console.log("Clicked link with data-page:", dataPage);
+                // You can now use the dataPage value
+            });
+        });
+    });
+    
+    """))
     query_params = st.experimental_get_query_params()
     st.write(query_params)
     if "page" in query_params:
