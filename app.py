@@ -139,13 +139,6 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 #Hide the Sidebar
 
-st.markdown("""
-    <style>
-        section[data-testid="stSidebar"] {
-            display: none;
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 #navbar
 html_code = '''
