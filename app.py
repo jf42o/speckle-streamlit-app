@@ -430,8 +430,8 @@ if not LOCAL:
             <div class="center-container"></div>
             <div class="right-container">
                 <div class="nav-links">
-                    <a href="https://specklelit.streamlit.app/Data?{access_code}" target="_self">Data</a>
-                    <a href="https://specklelit.streamlit.app/About?{access_code}" target="_self">About</a>
+                    <a href="https://specklelit.streamlit.app/Data?access_code={access_code}" target="_self">Data</a>
+                    <a href="https://specklelit.streamlit.app/About?access_code={access_code}" target="_self">About</a>
                 </div>
             </div>
         </div>
