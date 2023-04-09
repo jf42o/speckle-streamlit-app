@@ -585,7 +585,9 @@ if not LOCAL:
                             ".ag-row" : { "background-color" : "white", "border-radius": "5px"},
                             ".ag-row:nth-child(odd)" : {"background-color" : "#f0f5f9"},
                             ".ag-row-selected": {"background-color": "blue !important",
-                                                "color": "white !important"}}
+                                                "color": "white !important"}
+                        }
+                        
                         
                         gb = GridOptionsBuilder.from_dataframe(st.session_state['parsed_model_data'])
                         gb.configure_default_column(editable=True, groupable=True)
@@ -604,8 +606,8 @@ if not LOCAL:
                             allow_unsafe_jscode=True,
                             height=600)
                 
-                        sel_rows = grid_return["selected_rows"]
-                        ids = [sel_rows["ID"] for sel_rows in sel_rows]
+                        sel_rows = grid_return["data"]
+                        ids = list(sel_rows["ID"])
                         st.session_state["speckle_url"] =  generate_speckle_url(speckle_url,ids) #speckle_url 
                         edited_data_mid = grid_return["data"]
                         #st.write(edited_data)
@@ -614,7 +616,10 @@ if not LOCAL:
                                                     gridOptions=gridoptions,
                                                     update_mode=GridUpdateMode.MANUAL,
                                                     data_return_mode=DataReturnMode.FILTERED,
-                                                    reload_data=True
+                                                    reload_data=True,
+                                                    custom_css = custom_css_aggrid,
+                                                    allow_unsafe_jscode=True,
+                                                    height=200
                                         )
                         if st.button("Commit Changes"):
                             edited_data = grid_return_filtered["data"]
@@ -628,11 +633,14 @@ if not LOCAL:
                                 message="Updated parameter values using SpeckleLit",
                             )
 
-                    with col2:
-                        #st.write(st.session_state["speckle_url"])
-                        st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=600)
+
+                with col2:
+                    #st.write(st.session_state["speckle_url"])
+                    st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=750)
 
 
+
+                    
 else:
     col1, col2 = st.columns(2)
 

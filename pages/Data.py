@@ -13,3 +13,4 @@ st.markdown("""
 #session = st.session_state
 #session.test = "Test"
 #st.write(session.access_code)
+st.write(st.session_state["parsed_model_data"])
