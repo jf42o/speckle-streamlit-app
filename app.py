@@ -17,8 +17,7 @@ from specklepy.api import operations
 from streamlit_extras.switch_page_button import switch_page
 from specklepy.api.credentials import get_default_account
 from streamlit_javascript import st_javascript
-from streamlit.components.v1 import html
-from mycomponent import mycomponent
+
 
 #toggle between local / redirection from speckleserver to app
 LOCAL = False
