@@ -333,25 +333,13 @@ body, h1, h2, h3, h4, h5, h6, p, a {
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
 
-<div class="fixed-nav">
-    <div class="left-container">
-        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-        <h1>SpeckleLit</h1>
-    </div>
-    <div class="center-container"></div>
-    <div class="right-container">
-        <div class="nav-links">
-            <a href="/Data" target="_self">Data</a>
-            <a href="/About" target="_self">About</a>
-        </div>
-    </div>
-</div>
 
 <div class="middle-text-container">
     <h1 class="middle-text">Make sense from your <span class="gradient-text">Speckle Data</span>. SpeckleLit.</h1>
 </div>
 
 '''
+
 
 st.markdown(html_code, unsafe_allow_html=True)
 
@@ -432,6 +420,24 @@ if not LOCAL:
     #--------------------------------------------------------------------------------------------------------------------#
     
     #Selection of Streams#
+
+    st.markdown(f"""
+        <div class="fixed-nav">
+            <div class="left-container">
+                <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+                <h1>SpeckleLit</h1>
+            </div>
+            <div class="center-container"></div>
+            <div class="right-container">
+                <div class="nav-links">
+                    <a href="https://specklelit.streamlit.app/Data?{access_code}" target="_self">Data</a>
+                    <a href="https://specklelit.streamlit.app/About?{access_code}" target="_self">About</a>
+                </div>
+            </div>
+        </div>
+
+        """,unsafe_allow_html=True)
+    
 
     if isinstance(streams, list):
 
