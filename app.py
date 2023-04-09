@@ -442,15 +442,12 @@ if not LOCAL:
    
     js_code = ("""
     
-    function getAllElements() {
-        const allElements = document.getElementsByTagName('*');
-        return allElements;
-        }
-
-    const elements = getAllElements();
-    console.log(elements);
+  const allElements = document.getElementsByTagName('*');
+const elementTagNames = Array.from(allElements).map((element) => element.tagName);
+console.log(elementTagNames);
     
     """)
+
     width = st_javascript(js_code)
     st.markdown(width)
 
