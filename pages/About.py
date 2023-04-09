@@ -252,6 +252,11 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     </div>
 </div>
 
+
+<div class="middle-text-container">
+    <h1 class="middle-text">This is about the author of the app and <span class="gradient-text">useful links</span>. SpeckleLit.</h1>
+</div>
+
 '''
 
 st.markdown(html_code, unsafe_allow_html=True)
