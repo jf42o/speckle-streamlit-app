@@ -440,7 +440,17 @@ if not LOCAL:
     
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
-    js_code = ("""window.innerWidth""")
+    js_code = ("""
+    
+    function getAllElements() {
+        const allElements = document.getElementsByTagName('*');
+        return allElements;
+        }
+
+    const elements = getAllElements();
+    console.log(elements);
+    
+    """)
     width = st_javascript(js_code)
     st.markdown(width)
 
