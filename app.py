@@ -461,10 +461,10 @@ if not LOCAL:
     home_clicked = st.button("Home", key="home", on_click=lambda: st.session_state.update({"current_page": "Home"}))
     data_clicked = st.button("Data", key="data", on_click=lambda: st.session_state.update({"current_page": "Data"}))
     about_clicked = st.button("About", key="about", on_click=lambda: st.session_state.update({"current_page": "About"}))
-    
+
     st.markdown("""
         <style>
-        button[id^="streamlit-button-"] {
+        button..css-nnhwp2 {
             visibility: hidden;
             position: absolute;
         }
