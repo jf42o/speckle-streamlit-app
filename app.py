@@ -139,6 +139,13 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 #Hide the Sidebar
 
+st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] {
+            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 #navbar
 html_code = '''
@@ -423,8 +430,8 @@ if not LOCAL:
             <div class="center-container"></div>
             <div class="right-container">
                 <div class="nav-links">
-                    <a href="https://specklelit.streamlit.app/Data?access_code={access_code}" target="_self">Data</a>
-                    <a href="https://specklelit.streamlit.app/About?access_code={access_code}" target="_self">About</a>
+                    <a href="specklelit.streamlit.app/Data?access_code={access_code}">Data</a>
+                    <a href="specklelit.streamlit.app/About?access_code={access_code}">About</a>
                 </div>
             </div>
         </div>
