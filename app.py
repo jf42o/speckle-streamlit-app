@@ -443,8 +443,9 @@ if not LOCAL:
     """
     st.markdown(navbar_html, unsafe_allow_html=True)    
 
-    js_code = """await fetch("https://reqres.in/api/products/3")
-    .then(function(response) {return response.json();})"""
+    js_code = """
+    const navLinks = document.querySelectorAll("nav-links");
+    """
 
     return_value = st_javascript(js_code)
     st.markdown(f"Return value was: {return_value}")
