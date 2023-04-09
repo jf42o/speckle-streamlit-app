@@ -18,8 +18,6 @@ from specklepy.api import operations
 
 from specklepy.api.credentials import get_default_account
 
-st.session_state["parsed_model_data"] = "parsed"
-
 #toggle between local / redirection from speckleserver to app
 LOCAL = False
 UPDATE = True

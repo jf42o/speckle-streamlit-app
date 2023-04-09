@@ -4,7 +4,7 @@ from specklepy.api.credentials import get_default_account
 
 #PAGE CONFIG
 st.set_page_config(
-    page_title="Your Data",
+    page_title="Data",
     page_icon="📊",
     layout = "wide"
 )
