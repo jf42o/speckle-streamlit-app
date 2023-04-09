@@ -479,7 +479,6 @@ if not LOCAL:
     """
 
     res = components.html(js_code)
-    st.markdown(res)
     query_params = st.experimental_get_query_params()
 
     if isinstance(streams, list):
