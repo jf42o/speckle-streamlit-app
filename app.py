@@ -442,23 +442,20 @@ if not LOCAL:
    
     js = st_javascript("""
 
-      function getDataPageOnClick() {
-        return new Promise((resolve) => {
+        function getDataPageOnClick() {
             const navLinks = document.querySelectorAll(".nav-links a");
 
-            const onClickHandler = (event) => {
-                event.preventDefault();
-                const dataPage = event.target.getAttribute("data-page");
-                resolve(dataPage);
-            };
-
-            navLinks.forEach((link) => {
-                link.addEventListener("click", onClickHandler);
+            navLinks.forEach(link => {
+                link.addEventListener("click", event => {
+                    event.preventDefault();
+                    const dataPage = event.currentTarget.getAttribute("data-page");
+                    console.log("Clicked link with data-page:", dataPage);
+                    // You can now use the dataPage value
+                });
             });
-        });
-    }
+        }
+
     getDataPageOnClick();
-    
     """)
 
     st.write(js)
