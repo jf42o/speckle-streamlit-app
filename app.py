@@ -444,13 +444,9 @@ if not LOCAL:
    
     js_code = ("""
     
-        function printDomElements() {
-            const allElements = document.querySelectorAll('*');
-            allElements.forEach(element => {
-                console.log(element);
-            });
-        }
-        printDomElements();
+     await fetch("https://reqres.in/api/products/3").then(function(response) {
+    return response.json();
+            }) 
 
     """)
 
