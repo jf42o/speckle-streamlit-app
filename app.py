@@ -433,7 +433,7 @@ if not LOCAL:
     
     #Selection of Streams#
 
-    navbar_html = """
+    navbar_html = f"""
 <div class="fixed-nav">
   <div class="left-container">
     <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
@@ -443,8 +443,8 @@ if not LOCAL:
   <div class="right-container">
     <div class="nav-links">
       <a target="_self" href="specklelit.streamlit.app/" data-page="home">Home</a>
-      <a target="_self" href="specklelit.streamlit.app/Data" data-page="data">Data</a>
-      <a target="_self" href="specklelit.streamlit.app/About" data-page="about">About</a>
+      <a target="_self" href="specklelit.streamlit.app/Data?access_code={access_code}" data-page="data">Data</a>
+      <a target="_self" href="specklelit.streamlit.app/About?access_code={access_code}" data-page="about">About</a>
     </div>
   </div>
 </div>
