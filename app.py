@@ -458,6 +458,7 @@ if not LOCAL:
         });
     }
     getDataPageOnClick();
+    
     """)
 
     st.write(js)
