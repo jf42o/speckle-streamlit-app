@@ -459,11 +459,12 @@ if not LOCAL:
     }
 
     getDataPageOnClick();
-    
+
     """)
 
     st.write(js)
     query_params = st.experimental_get_query_params()
+    st.write(query_params)
     if "page" in query_params:
         st.session_state.current_page = query_params["page"][0]
     else:
