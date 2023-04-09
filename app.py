@@ -441,20 +441,13 @@ if not LOCAL:
     st.markdown(navbar_html, unsafe_allow_html=True)    
    
     js_code = ("""
-   
-        function getAllElements() {
-        const allElements = document.getElementsByTagName('*');
-        return allElements;
-        }
-    
-    const elements = getAllElements();
-    console.log(elements)
+        window.innerWidth
     """)
 
     st.write(st_javascript(js_code=js_code))
 
     query_params = st.experimental_get_query_params()
-    st.write(query_params)
+
     if "page" in query_params:
         st.session_state.current_page = query_params["page"][0]
     else:
