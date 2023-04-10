@@ -21,7 +21,7 @@ def login():
 
     appID = st.secrets["appID"]
     appSecret = st.secrets["appSecret"]
-    
+
     inject_css('./style/hide_streamlit_style.css')
     inject_css('./style/style_header.css')
     #navbar
@@ -133,8 +133,7 @@ def edit():
         except:
             streams = None
 
-    if isinstance(st.session_state.streams, list):
-        streams = st.session_state.streams
+    if isinstance(streams, list):
         
         st.markdown('<style>' + open('./style/style_selectbox.css').read() + '</style>', unsafe_allow_html=True)
         
