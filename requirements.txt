@@ -4,3 +4,4 @@ specklepy
 pandas
 streamlit-aggrid
 streamlit-on-Hover-tabs
+plotly-express

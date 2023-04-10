@@ -11,6 +11,7 @@ from specklepy.objects.geometry import *
 from specklepy.api import operations
 from specklepy.api.credentials import get_default_account
 from st_on_hover_tabs import on_hover_tabs
+import plotly.express as px
 from utils import getBranches, getStreams, getCommits, getObject, parse_and_update_model, update_speckle_model, inject_css
 
 #toggle between local / redirection from speckleserver to app
@@ -403,7 +404,28 @@ def data():
     ''',unsafe_allow_html=True)
 
 
-    st.dataframe(st.session_state.parsed_model_data)
+    pd.DataFrame(st.session_state.parsed_model_data)
+    df.columns = df.iloc[0]
+    df = df[1:]
+    
+    familientyp_count = df['Familientyp'].value_counts().reset_index()
+    familientyp_count.columns = ['Familientyp', 'Count']
+    fig1 = px.bar(familientyp_count, x='Familientyp', y='Count', title="Element count by Familientyp")
+    st.plotly_chart(fig1)
+
+    # Chart 2: Element count by Kategorie
+    kategorie_count = df['Kategorie'].value_counts().reset_index()
+    kategorie_count.columns = ['Kategorie', 'Count']
+    fig2 = px.bar(kategorie_count, x='Kategorie', y='Count', title="Element count by Kategorie")
+    st.plotly_chart(fig2)
+
+    # Chart 3: Element count by Ebene
+    ebene_count = df['Ebene'].value_counts().reset_index()
+    ebene_count.columns = ['Ebene', 'Count']
+    fig3 = px.bar(ebene_count, x='Ebene', y='Count', title="Element count by Ebene")
+    st.plotly_chart(fig3)
+
+
 
 def about():
 
