@@ -100,6 +100,7 @@ def login():
             streams = None
             if st.session_state['refresh_token']:
                 account = get_account_from_token("speckle.xyz", token)
+                st.session_state.account = account
                 client = SpeckleClient(host="speckle.xyz")
                 client.authenticate_with_token(token)
                 st.session_state.client = client
@@ -120,7 +121,7 @@ def edit():
     ''',unsafe_allow_html=True)
 
     client = st.session_state.client
-    st.write(client.username)
+    st.write(account.user_name)
 
     try:
         streams = getStreams(st.session_state.client)
@@ -128,6 +129,7 @@ def edit():
         streams = None
     if not isinstance(streams, list):
         account = get_account_from_token("speckle.xyz", st.session_state.refresh_token)
+        st.session_state.account = account
         client = SpeckleClient(host="speckle.xyz")
         client.authenticate_with_token(st.session_state.refresh_token)
         try:
