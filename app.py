@@ -439,9 +439,9 @@ def loadData():
             <div class="center-container"></div>
             <div class="right-container">
                 <div class="nav-links">
-                    <a href="/?access_code={access_code}?nav="" class="nav-link">Home</a>
-                    <a href="/?access_code={access_code}?nav=Data"class="nav-link">Data</a>
-                    <a href= "/?access_code={access_code}?nav=About" class="nav-link">About</a>
+                    <a href="/?nav="" class="nav-link">Home</a>
+                    <a href="/?nav=Data"class="nav-link">Data</a>
+                    <a href= "/?nav=About" class="nav-link">About</a>
                 </div>
                 </div>
             </div>
