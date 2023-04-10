@@ -405,8 +405,11 @@ def data():
 
 
     df = pd.DataFrame(st.session_state.parsed_model_data)
+    st.write(df)
     df.columns = df.iloc[0]
+    st.write(df.columns)
     df = df[1:]
+    st.write(df)
 
     familientyp_count = df['Familientyp'].value_counts().reset_index()
     familientyp_count.columns = ['Familientyp', 'Count']
