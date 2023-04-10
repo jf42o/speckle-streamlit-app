@@ -35,7 +35,7 @@ def navigation():
         if route == "":
             loadData()
         elif route == "About":
-            loadAbout()
+            switch_page("About")
         elif route == "Home":
             loadHome()
     else:
