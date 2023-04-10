@@ -120,7 +120,7 @@ def edit():
     ''',unsafe_allow_html=True)
 
     client = st.session_state.client
-    st.write(client.me())
+    st.write(client.currentUser)
 
     try:
         streams = getStreams(st.session_state.client)
