@@ -31,6 +31,7 @@ def get_current_route():
 
 def navigation():
     route = get_current_route()
+    st.write(route)
     if route is not None:
         if route == "":
             loadData()
@@ -1069,9 +1070,6 @@ def loadHome():
 
     st.markdown(html_code, unsafe_allow_html=True)
 
-    #session = st.session_state
-    #session.test = "Test"
-    #st.write(session.access_code)
     st.write(st.session_state["parsed_model_data"])
         
 def loadAbout():
@@ -1330,10 +1328,6 @@ def loadAbout():
     '''
 
     st.markdown(html_code, unsafe_allow_html=True)
-
-    #session = st.session_state
-    #session.test = "Test"
-    #st.write(session.access_code)
     st.write(st.session_state["parsed_model_data"])
 
 navigation()
