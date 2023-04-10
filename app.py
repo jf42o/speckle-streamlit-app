@@ -31,7 +31,6 @@ def get_current_route():
 
 def navigation():
     route = get_current_route()
-    st.write(route)
     if route is not None:
         if route == "":
             loadData()
