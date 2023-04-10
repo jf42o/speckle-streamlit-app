@@ -404,10 +404,10 @@ def data():
     ''',unsafe_allow_html=True)
 
 
-    pd.DataFrame(st.session_state.parsed_model_data)
+    df = pd.DataFrame(st.session_state.parsed_model_data)
     df.columns = df.iloc[0]
     df = df[1:]
-    
+
     familientyp_count = df['Familientyp'].value_counts().reset_index()
     familientyp_count.columns = ['Familientyp', 'Count']
     fig1 = px.bar(familientyp_count, x='Familientyp', y='Count', title="Element count by Familientyp")
