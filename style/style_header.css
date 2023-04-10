@@ -170,6 +170,3 @@ body, h1, h2, h3, h4, h5, h6, p, a {
     background-clip: text;
     color: transparent; /* Set the color to transparent */
 }
-.gradient-text-streamlit {
-    background-image: linear-gradient(to right, #f63366, #ff5858, #ff8373, #ffa599, #ffc9bd); /* Add the Streamlit gradient */
-}

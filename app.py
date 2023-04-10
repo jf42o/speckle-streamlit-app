@@ -12,7 +12,10 @@ from specklepy.api import operations
 from specklepy.api.credentials import get_default_account
 from st_on_hover_tabs import on_hover_tabs
 import plotly.express as px
-from utils import getBranches, getStreams, getCommits, getObject, parse_and_update_model, update_speckle_model, inject_css
+from utils import *
+from plotly_charts import *
+import numpy as np
+
 
 #toggle between local / redirection from speckleserver to app
 LOCAL = False
@@ -198,8 +201,8 @@ def edit():
                         params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
 
                         # Parse the model only if it's not already parsed
-                        if st.session_state['parsed_model_data'] is None:
-                            st.session_state['parsed_model_data'] = parse_and_update_model(commit_data, categories, params_to_search)
+
+                        st.session_state['parsed_model_data'] = parse_and_update_model(commit_data, categories, params_to_search)
 
                         ##FUNCTION for generating speckle url
                         def generate_speckle_url(commit_url, ids):
@@ -393,7 +396,7 @@ def debug():
             commit_data = operations.receive(obj_id, wrapper.get_transport())
 
             categories = ["@Wände", "@Geschossdecken"]
-            params_to_search = ["IMP_Disziplin", "IMP_Bauteil"]
+            params_to_search = ["IMP_Disziplin", "IMP_Bauteil", "Volumen"]
 
             # Parse the model only if it's not already parsed
             if st.session_state['parsed_model_data'] is None:
@@ -469,16 +472,73 @@ def debug():
                     message="Updated parameter values using SpeckleLit",
                 )
             
-            df = pd.DataFrame(st.session_state.parsed_model_data)
-            st.write(df)
-            df.columns = df.iloc[0]
-            st.write(df.columns)
-            df = df[1:]
-            st.write(df)
-
-
+            df = st.session_state.parsed_model_data
+            df2 = df.copy()
+        
+               
         with col2:
             #st.write(st.session_state["speckle_url"])
             st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=750)
+
+
+        ####
+        st.title("Plotly Chart with Selectable Parameters")
+
+        # Compute metrics for DataFrame quality
+        total_elements = df.size
+        num_empty_values = df.isnull().sum().sum()
+        missing_ratio = num_empty_values / total_elements * 100
+        num_duplicates = df.duplicated().sum()
+
+        st.subheader("Data Quality Metrics")
+        totalelements, empty_values, missingratio, duplicates = st.columns(4)
+        with totalelements:
+            st.write(f"Total elements: {total_elements}")
+        with empty_values:
+            st.write(f"Empty values: {num_empty_values}")
+        with missingratio:
+            st.write(f"Missing ratio: {missing_ratio}%")
+        with duplicates:
+            st.write(f"Duplicates: {num_duplicates}")
+
+        chart_type1, x1, y1, group1 = st.columns(4)
+
+        with chart_type1:
+            chart_type1 = st.selectbox(f"Select Chart Type:", chart_types,key="chart_type1")
+        with x1:
+            if chart_type1 == ("Scatter Chart" or "Pie Chart"):
+                x_axis1 = st.selectbox(f" X-axis parameter:", get_numeric_columns(df),key="x_axis1")
+            else:
+                x_axis1 = st.selectbox(f" X-axis parameter:", get_non_numeric_columns(df),key="x_axis1")
+        with y1:
+            if chart_type1 == "Pie Chart":
+                y_axis1 = st.selectbox(f"Y-axis parameter:", get_non_numeric_columns(df), key="y_axis1")
+            else:
+                y_axis1 = st.selectbox(f"Y-axis parameter:", get_numeric_columns(df), key="y_axis1")
+        with group1:
+            group_by1 = st.selectbox(f"Group By parameter (optional):", get_columns_except(df, x_axis1, y_axis1), key="group_by1")
+        fig1 = chart_classes[chart_type1](df).render(x_axis=x_axis1, y_axis=y_axis1,group_by=group_by1)
+        st.plotly_chart(fig1,use_container_width=True,config={'displayModeBar': True, 'scrollZoom': True, 'responsive': True, 'staticPlot': False, "width" : 1000, "height" : 1000})
+
+        chart_type2, x2, y2, group2 = st.columns(4)
+
+        with chart_type2:
+            chart_type2 = st.selectbox(f"Select Chart Type:", chart_types,key="chart_type2")
+        with x2:
+            if chart_type2 == ("Scatter Chart" or "Pie Chart"):
+                x_axis2 = st.selectbox(f" X-axis parameter:", get_numeric_columns(df2),key="x_axis2")
+            else:
+                x_axis2 = st.selectbox(f" X-axis parameter:", get_non_numeric_columns(df2),key="x_axis2")
+        with y2:
+            if chart_type2 == "Pie Chart":
+                y_axis2 = st.selectbox(f"Y-axis parameter:", get_non_numeric_columns(df2),key="y_axis2")
+            else:
+                y_axis2 = st.selectbox(f"Y-axis parameter:", get_numeric_columns(df2),key="y_axis2")
+        with group2:
+            group_by2 = st.selectbox(f"Group By parameter (optional):",get_columns_except(df2, x_axis2, y_axis2),key="group_by2")
+
+        fig2 = chart_classes[chart_type2](df).render(x_axis=x_axis2, y_axis=y_axis2,group_by=group_by2)
+        st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': True, 'scrollZoom': True, 'responsive': True, 'staticPlot': False})
+    
 
 debug()
