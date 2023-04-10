@@ -93,6 +93,8 @@ def login():
                     refresh_token = response.json()['refreshToken']
                     st.session_state['token'] = token
                     st.session_state['refresh_token'] = refresh_token
+                    account = get_account_from_token("speckle.xyz", token)
+                    st.session_state.account = account
 
                 else:
                     st.write("Error occurred : " ,response.status_code, response.text)
@@ -104,6 +106,7 @@ def login():
                 client = SpeckleClient(host="speckle.xyz")
                 client.authenticate_with_token(token)
                 st.session_state.client = client
+        
     
 def edit():
     inject_css('./style/hide_streamlit_style.css')
