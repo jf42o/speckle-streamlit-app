@@ -105,7 +105,6 @@ def login():
                 st.session_state.client = client
     
 def edit():
-        
     inject_css('./style/hide_streamlit_style.css')
     inject_css('./style/style_header.css')
 
@@ -121,7 +120,8 @@ def edit():
     ''',unsafe_allow_html=True)
 
     client = st.session_state.client
-    
+    st.write(client.me())
+
     try:
         streams = getStreams(st.session_state.client)
     except:
