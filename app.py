@@ -154,25 +154,6 @@ def loadData():
                     """
     st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
-    #Hide the Sidebar
-
-
-    st.markdown("""
-        <style>
-            section[data-testid="stSidebar"] {
-
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-        <style>
-            section[data-testid="stSidebar"] {
-        
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
 
 
     #navbar
