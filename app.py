@@ -15,7 +15,7 @@ import plotly.express as px
 from utils import getBranches, getStreams, getCommits, getObject, parse_and_update_model, update_speckle_model, inject_css
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = False
+LOCAL = True
 UPDATE = True
 
 def login():
@@ -45,70 +45,69 @@ def login():
 
     #Authentification#
 
-    if not LOCAL:
-        if 'access_code' not in st.session_state:
-            st.session_state['access_code'] = None
-        if 'token' not in st.session_state:
-            st.session_state['token'] = None
-        if 'refresh_token' not in st.session_state:
-            st.session_state['refresh_token'] = None
-        try:
-            access_code = st.experimental_get_query_params()['access_code'][0]
-            st.session_state['access_code'] = access_code
-        except:
-            access_code = None
-            st.session_state['access_code'] = None
+    if 'access_code' not in st.session_state:
+        st.session_state['access_code'] = None
+    if 'token' not in st.session_state:
+        st.session_state['token'] = None
+    if 'refresh_token' not in st.session_state:
+        st.session_state['refresh_token'] = None
+    try:
+        access_code = st.experimental_get_query_params()['access_code'][0]
+        st.session_state['access_code'] = access_code
+    except:
+        access_code = None
+        st.session_state['access_code'] = None
 
-        token = st.session_state['token']
-        refresh_token = st.session_state['refresh_token']
+    token = st.session_state['token']
+    refresh_token = st.session_state['refresh_token']
 
-        if not refresh_token:
-            if not access_code:
-                # Verify the app with the challenge
-                verify_url="https://speckle.xyz/authn/verify/"+appID+"/"+st.secrets["challenge"]
-                html_code = (f"""
-                            <div class="container">
-                                <button class="custom-login-button">
-                                    <a href="{verify_url}" style="color: inherit; text-decoration: none;">
-                                        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-                                        Login to Speckle
-                                    </a>
-                                </button>
-                            </div>
-                            """
-                    )
-                st.markdown(html_code, unsafe_allow_html=True)
+    if not refresh_token:
+        if not access_code:
+            # Verify the app with the challenge
+            verify_url="https://speckle.xyz/authn/verify/"+appID+"/"+st.secrets["challenge"]
+            html_code = (f"""
+                        <div class="container">
+                            <button class="custom-login-button">
+                                <a href="{verify_url}" style="color: inherit; text-decoration: none;">
+                                    <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+                                    Login to Speckle
+                                </a>
+                            </button>
+                        </div>
+                        """
+                )
+            st.markdown(html_code, unsafe_allow_html=True)
 
-            else:
-                response = requests.post(
-                        url=f"https://speckle.xyz/auth/token",
-                        json={
-                            "appSecret": appSecret,
-                            "appId": appID,
-                            "accessCode": access_code,
-                            "challenge": st.secrets["challenge"],
-                        },
-                    )
-                if (response.status_code == 200):
-                    token = response.json()['token']
-                    refresh_token = response.json()['refreshToken']
-                    st.session_state['token'] = token
-                    st.session_state['refresh_token'] = refresh_token
-                    account = get_account_from_token("speckle.xyz", token)
-                    st.session_state.account = account
-
-                else:
-                    st.write("Error occurred : " ,response.status_code, response.text)
-
-            streams = None
-            if st.session_state['refresh_token']:
+        else:
+            response = requests.post(
+                    url=f"https://speckle.xyz/auth/token",
+                    json={
+                        "appSecret": appSecret,
+                        "appId": appID,
+                        "accessCode": access_code,
+                        "challenge": st.secrets["challenge"],
+                    },
+                )
+            if (response.status_code == 200):
+                token = response.json()['token']
+                refresh_token = response.json()['refreshToken']
+                st.session_state['token'] = token
+                st.session_state['refresh_token'] = refresh_token
                 account = get_account_from_token("speckle.xyz", token)
                 st.session_state.account = account
-                client = SpeckleClient(host="speckle.xyz")
-                client.authenticate_with_token(token)
-                st.session_state.client = client
-        
+
+            else:
+                st.write("Error occurred : " ,response.status_code, response.text)
+
+        streams = None
+        if st.session_state['refresh_token']:
+            account = get_account_from_token("speckle.xyz", token)
+            st.session_state.account = account
+            client = SpeckleClient(host="speckle.xyz")
+            client.authenticate_with_token(token)
+            st.session_state.client = client
     
+
 def edit():
     inject_css('./style/hide_streamlit_style.css')
     inject_css('./style/style_header.css')
@@ -277,7 +276,94 @@ def edit():
                 with col2:
                     #st.write(st.session_state["speckle_url"])
                     st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=750)
-    elif LOCAL:
+
+def data():
+
+    inject_css('./style/hide_streamlit_style.css')
+    inject_css('./style/style_header.css')
+    #navbar
+    st.markdown('''
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&display=swap">
+    <div class="fixed-nav">
+    <div class="left-container">
+        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+        <h1>SpeckleLit</h1>
+    </div>
+    ''',unsafe_allow_html=True)
+
+
+    df = pd.DataFrame(st.session_state.parsed_model_data)
+    st.write(df)
+    df.columns = df.iloc[0]
+    st.write(df.columns)
+    df = df[1:]
+    st.write(df)
+
+
+
+def about():
+
+    inject_css('./style/hide_streamlit_style.css')
+    inject_css('./style/style_header.css')
+
+    #navbar
+    st.markdown('''
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&display=swap">
+    <div class="fixed-nav">
+    <div class="left-container">
+        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
+        <h1>SpeckleLit</h1>
+    </div>
+    ''',unsafe_allow_html=True)
+
+
+def main():
+    if not LOCAL:
+        st.set_page_config(
+            page_title="SpeckleLit",
+            page_icon="📊",
+            layout = "wide"
+        )
+
+        inject_css('./style/style_navbar.css')
+    
+        with st.sidebar:
+            tabs = on_hover_tabs(tabName=["Home", "Edit", "Data", "About"], iconName=['home','edit', 'pie_chart', 'person'], 
+                                styles = {'navtab': {'background-color':'#fff',
+                                                        'color': '#1f77b4',
+                                                        'font-size': '20px',
+                                                            'font-family' : 'Public Sans',
+                                                        'transition': '.5s',
+                                                        'white-space': 'nowrap',
+                                                        'text-transform': 'uppercase'},
+                                            'tabOptionsStyle': {':hover :hover': {'color': '#1f77b4',
+                                                                            'cursor': 'pointer'}},
+                                            'iconStyle':{'position':'fixed',
+                                                            'left':'7.5px',
+                                                            'text-align': 'left'},
+                                            'tabStyle' : {'list-style-type': 'none',
+                                                            'margin-bottom': '30px',
+                                                            'padding-left': '5px'}},
+                                                key="1", default_choice=0)
+            
+
+        if tabs == "Home":
+            login()
+        if tabs == "Data":
+            data()
+        elif tabs == "Edit":
+            edit()
+        elif tabs == "About":
+            about()
+            
+main()
+
+def debug():
+
+    if LOCAL:
+        st.set_page_config(page_title="SpeckleLit",layout="wide")
         col1, col2 = st.columns(2)
 
         commit_url = "https://speckle.xyz/streams/89ad038e05/commits/a914527708"
@@ -355,7 +441,7 @@ def edit():
                 custom_css=custom_css_aggrid,
                 allow_unsafe_jscode=True,
                 height=600)
-    
+
             sel_rows = grid_return["data"]
             ids = list(sel_rows["ID"])
             st.session_state["speckle_url"] =  generate_speckle_url(speckle_url,ids) #speckle_url 
@@ -382,108 +468,17 @@ def edit():
                     object_id=new_object_id,
                     message="Updated parameter values using SpeckleLit",
                 )
+            
+            df = pd.DataFrame(st.session_state.parsed_model_data)
+            st.write(df)
+            df.columns = df.iloc[0]
+            st.write(df.columns)
+            df = df[1:]
+            st.write(df)
 
 
         with col2:
             #st.write(st.session_state["speckle_url"])
             st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=750)
 
-def data():
-
-    inject_css('./style/hide_streamlit_style.css')
-    inject_css('./style/style_header.css')
-    #navbar
-    st.markdown('''
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&display=swap">
-    <div class="fixed-nav">
-    <div class="left-container">
-        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-        <h1>SpeckleLit</h1>
-    </div>
-    ''',unsafe_allow_html=True)
-
-
-    df = pd.DataFrame(st.session_state.parsed_model_data)
-    st.write(df)
-    df.columns = df.iloc[0]
-    st.write(df.columns)
-    df = df[1:]
-    st.write(df)
-
-    familientyp_count = df['Familientyp'].value_counts().reset_index()
-    familientyp_count.columns = ['Familientyp', 'Count']
-    fig1 = px.bar(familientyp_count, x='Familientyp', y='Count', title="Element count by Familientyp")
-    st.plotly_chart(fig1)
-
-    # Chart 2: Element count by Kategorie
-    kategorie_count = df['Kategorie'].value_counts().reset_index()
-    kategorie_count.columns = ['Kategorie', 'Count']
-    fig2 = px.bar(kategorie_count, x='Kategorie', y='Count', title="Element count by Kategorie")
-    st.plotly_chart(fig2)
-
-    # Chart 3: Element count by Ebene
-    ebene_count = df['Ebene'].value_counts().reset_index()
-    ebene_count.columns = ['Ebene', 'Count']
-    fig3 = px.bar(ebene_count, x='Ebene', y='Count', title="Element count by Ebene")
-    st.plotly_chart(fig3)
-
-
-
-def about():
-
-    inject_css('./style/hide_streamlit_style.css')
-    inject_css('./style/style_header.css')
-
-    #navbar
-    st.markdown('''
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&display=swap">
-    <div class="fixed-nav">
-    <div class="left-container">
-        <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
-        <h1>SpeckleLit</h1>
-    </div>
-    ''',unsafe_allow_html=True)
-
-
-def main():
-
-    st.set_page_config(
-        page_title="SpeckleLit",
-        page_icon="📊",
-        layout = "wide"
-    )
-
-    inject_css('./style/style_navbar.css')
-   
-    with st.sidebar:
-        tabs = on_hover_tabs(tabName=["Home", "Edit", "Data", "About"], iconName=['home','edit', 'pie_chart', 'person'], 
-                            styles = {'navtab': {'background-color':'#fff',
-                                                    'color': '#1f77b4',
-                                                    'font-size': '20px',
-                                                        'font-family' : 'Public Sans',
-                                                    'transition': '.5s',
-                                                    'white-space': 'nowrap',
-                                                    'text-transform': 'uppercase'},
-                                        'tabOptionsStyle': {':hover :hover': {'color': '#1f77b4',
-                                                                        'cursor': 'pointer'}},
-                                        'iconStyle':{'position':'fixed',
-                                                        'left':'7.5px',
-                                                        'text-align': 'left'},
-                                        'tabStyle' : {'list-style-type': 'none',
-                                                        'margin-bottom': '30px',
-                                                        'padding-left': '5px'}},
-                                            key="1", default_choice=0)
-        
-
-    if tabs == "Home":
-        login()
-    if tabs == "Data":
-        data()
-    elif tabs == "Edit":
-        edit()
-    elif tabs == "About":
-        about()
-        
-main()
+debug()
