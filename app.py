@@ -15,7 +15,7 @@ import plotly.express as px
 from utils import getBranches, getStreams, getCommits, getObject, parse_and_update_model, update_speckle_model, inject_css
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 UPDATE = True
 
 def login():
