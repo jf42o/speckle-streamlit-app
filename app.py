@@ -120,6 +120,8 @@ def edit():
     </div>
     ''',unsafe_allow_html=True)
 
+    client = st.session_state.client
+    
     try:
         streams = getStreams(st.session_state.client)
     except:
