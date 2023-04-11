@@ -1,5 +1,5 @@
 section[data-testid='stSidebar'] {
-    background: #fff
+    background: #fff;
     min-width:unset !important;
     width: unset !important;
     flex-shrink: unset !important;
@@ -11,7 +11,7 @@ section[data-testid='stSidebar'] {
 
 button[kind="header"] {
     background-color: transparent;
-    color: #fff
+    color: #fff;
 }
 
 @media(hover){
@@ -28,7 +28,7 @@ button[kind="header"] {
         z-index: 1;
         top: 300;
         left: 0;
-        background: #fff
+        background: #fff;
         overflow-x: hidden;
         transition: width 0.5s ease, box-shadow 0.5s ease;
         padding-top: -60px;
