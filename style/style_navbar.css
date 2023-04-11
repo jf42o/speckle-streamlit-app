@@ -1,5 +1,5 @@
 section[data-testid='stSidebar'] {
-    background: linear-gradient(to right, #fff 0%, #f2f2f2 100%);
+    background: #fff
     min-width:unset !important;
     width: unset !important;
     flex-shrink: unset !important;
@@ -11,7 +11,7 @@ section[data-testid='stSidebar'] {
 
 button[kind="header"] {
     background-color: transparent;
-    color:rgb(180, 167, 141)
+    color: #fff
 }
 
 @media(hover){
