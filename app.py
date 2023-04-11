@@ -18,7 +18,7 @@ import numpy as np
 
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 UPDATE = True
 
 def login():
