@@ -18,7 +18,7 @@ import numpy as np
 
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 UPDATE = True
 
 def login():
@@ -541,7 +541,9 @@ def debug():
         st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': True, 'scrollZoom': True, 'responsive': True, 'staticPlot': False})
     
 
-####trimesh#######
+        ####trimesh#######
+
+        parse_and_create_trimesh_meshes(commit_data, categories)
 
 
 debug()

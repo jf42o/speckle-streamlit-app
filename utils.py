@@ -101,17 +101,17 @@ def parse_and_create_trimesh_meshes(commit_data, categories):
         for element in category_elements:
             displayValue = element["displayValue"][0]
 
-            for face, vertex in zip(displayValue["faces"], displayValue["vertices"]):
-                faces_data = face[0]["data"]
-                vertices_data = vertex[0]["data"]
+            faces = displayValue["faces"]
+            vertices = displayValue["vertices"]
+            st.write(faces)
+            st.write(vertices)
+            # Convert vertices and faces data to NumPy arrays and reshape
+            #vertices = np.array(vertices_data).reshape(-1, 3)
+            #faces = np.array(faces_data).reshape(-1, 3)
 
-                # Convert vertices and faces data to NumPy arrays and reshape
-                vertices = np.array(vertices_data).reshape(-1, 3)
-                faces = np.array(faces_data).reshape(-1, 3)
+            # Create a Trimesh mesh object
+            trimesh_mesh = trimesh.Trimesh(vertices=vertices, faces=faces)
 
-                # Create a Trimesh mesh object
-                trimesh_mesh = trimesh.Trimesh(vertices=vertices, faces=faces)
-
-                trimesh_meshes.append(trimesh_mesh)
+            trimesh_meshes.append(trimesh_mesh)
 
     return trimesh_meshes
