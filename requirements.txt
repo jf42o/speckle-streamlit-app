@@ -6,3 +6,4 @@ streamlit-aggrid
 streamlit-on-Hover-tabs
 plotly-express
 numpy
+trimesh

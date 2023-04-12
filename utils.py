@@ -2,6 +2,8 @@ UPDATE = True
 import requests
 import streamlit as st
 import pandas as pd
+import numpy as np
+import trimesh
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, ColumnsAutoSizeMode, DataReturnMode, JsCode
 from specklepy.api.client import SpeckleClient
 from specklepy.api.credentials import get_account_from_token
@@ -36,22 +38,26 @@ def getObject(client, stream, commit):
 def parse_and_update_model(commit_data, categories, params_to_search):
     result = []
     for cat in categories:
-        category_elements = commit_data[cat]
-        for element in category_elements:
-            # Apply parameter updates
-            parameters = element["parameters"].get_member_names()
-            #parse metadata, so parameters that are not hidden unter the parameters Object (BUILT_IN_PARAMETERS)
-            dict = {'ElementID': element["elementId"], 'ID' : element["id"], 'Familientyp' : element["type"], 'Kategorie' : element["category"], 'Ebene' : element["level"]["name"]}
-            for param in params_to_search:
-                dict[param] = None
-                for parameter in parameters:
-                    try:
-                        key = element["parameters"][parameter]["name"]
-                        if key == param:
-                            dict[key] = element["parameters"][parameter]["value"]
-                            break
-                    except:
-                        continue
+        try:
+            category_elements = commit_data[cat]
+        except:
+            continue
+        if category_elements is not None:
+            for element in category_elements:
+                # Apply parameter updates
+                parameters = element["parameters"].get_member_names()
+                #parse metadata, so parameters that are not hidden unter the parameters Object (BUILT_IN_PARAMETERS)
+                dict = {'ElementID': element["elementId"], 'ID' : element["id"], 'Familientyp' : element["type"], 'Kategorie' : element["category"], 'Ebene' : element["level"]["name"]}
+                for param in params_to_search:
+                    dict[param] = None
+                    for parameter in parameters:
+                        try:
+                            key = element["parameters"][parameter]["name"]
+                            if key == param:
+                                dict[key] = element["parameters"][parameter]["value"]
+                                break
+                        except:
+                            continue
             result.append(dict)
     return pd.DataFrame(result)
 
@@ -85,3 +91,27 @@ def update_speckle_model(edited_dataframe, commit_data, categories, params_to_se
 
 def inject_css(css_path):
     st.markdown('<style>' + open(f'{css_path}').read() + '</style>', unsafe_allow_html=True)
+
+def parse_and_create_trimesh_meshes(commit_data, categories):
+    trimesh_meshes = []
+
+    for cat in categories:
+        category_elements = commit_data[cat]
+
+        for element in category_elements:
+            displayValue = element["displayValue"][0]
+
+            for face, vertex in zip(displayValue["faces"], displayValue["vertices"]):
+                faces_data = face[0]["data"]
+                vertices_data = vertex[0]["data"]
+
+                # Convert vertices and faces data to NumPy arrays and reshape
+                vertices = np.array(vertices_data).reshape(-1, 3)
+                faces = np.array(faces_data).reshape(-1, 3)
+
+                # Create a Trimesh mesh object
+                trimesh_mesh = trimesh.Trimesh(vertices=vertices, faces=faces)
+
+                trimesh_meshes.append(trimesh_mesh)
+
+    return trimesh_meshes

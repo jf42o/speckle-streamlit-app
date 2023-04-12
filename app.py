@@ -18,7 +18,7 @@ import numpy as np
 
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = False
+LOCAL = True
 UPDATE = True
 
 def login():
@@ -395,8 +395,8 @@ def debug():
             obj_id = commit.referencedObject
             commit_data = operations.receive(obj_id, wrapper.get_transport())
 
-            categories = ["@Wände", "@Geschossdecken"]
-            params_to_search = ["IMP_Disziplin", "IMP_Bauteil", "Volumen"]
+            categories = ["@Wände", "@Geschossdecken", "@Tragwerksstützen"]
+            params_to_search = ["IMP_Disziplin", "IMP_Bauteil", "IMP_Kranstatus", "IMP_Gewicht (kg)", "Volumen", "Länge", "Höhe", "Fläche" ]
 
             # Parse the model only if it's not already parsed
             if st.session_state['parsed_model_data'] is None:
@@ -506,7 +506,7 @@ def debug():
         with chart_type1:
             chart_type1 = st.selectbox(f"Select Chart Type:", chart_types,key="chart_type1")
         with x1:
-            if chart_type1 == ("Scatter Chart" or "Pie Chart"):
+            if chart_type1 == "Scatter Chart" or chart_type1 == "Pie Chart":
                 x_axis1 = st.selectbox(f" X-axis parameter:", get_numeric_columns(df),key="x_axis1")
             else:
                 x_axis1 = st.selectbox(f" X-axis parameter:", get_non_numeric_columns(df),key="x_axis1")
@@ -525,7 +525,7 @@ def debug():
         with chart_type2:
             chart_type2 = st.selectbox(f"Select Chart Type:", chart_types,key="chart_type2")
         with x2:
-            if chart_type2 == ("Scatter Chart" or "Pie Chart"):
+            if chart_type2== "Scatter Chart" or chart_type2 == "Pie Chart":
                 x_axis2 = st.selectbox(f" X-axis parameter:", get_numeric_columns(df2),key="x_axis2")
             else:
                 x_axis2 = st.selectbox(f" X-axis parameter:", get_non_numeric_columns(df2),key="x_axis2")
@@ -540,5 +540,8 @@ def debug():
         fig2 = chart_classes[chart_type2](df).render(x_axis=x_axis2, y_axis=y_axis2,group_by=group_by2)
         st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': True, 'scrollZoom': True, 'responsive': True, 'staticPlot': False})
     
+
+####trimesh#######
+
 
 debug()

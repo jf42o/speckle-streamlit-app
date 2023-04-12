@@ -28,6 +28,15 @@ class Chart:
             margin=dict(l=10, r=10, t=10, b=10),
         )
         return fig
+    
+    def apply_speckle_style_pie(self, fig):
+        fig.update_layout(
+            font=dict(family="Public Sans", size=14, color="black"),
+            plot_bgcolor='#fff',
+            paper_bgcolor='#fff',
+            margin=dict(l=10, r=10, t=10, b=10),
+        )
+        return fig
 
 # ScatterChart class
 class ScatterChart(Chart):
@@ -91,7 +100,7 @@ class PieChart(Chart):
         self.validate(x_axis)
         grouped_data = self.df.groupby(group_by)[x_axis].sum().reset_index()
         fig = px.pie(grouped_data, names=group_by, values=x_axis)
-        return self.apply_speckle_style(fig)
+        return self.apply_speckle_style_pie(fig)
     
 def display_charts(df):
     chart_type = st.selectbox(
