@@ -22,7 +22,7 @@ import trimesh
 from trimesh.collision import CollisionManager
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = True
+LOCAL = False
 UPDATE = True
 
 def login():
@@ -565,7 +565,7 @@ def debug():
         trimeshes1 = speckle_meshes_to_trimesh(meshes1)
         trimeshes2 = speckle_meshes_to_trimesh(meshes2)
 
-        #dae_file = download_dae_button(trimeshes1) 
+        dae_file = download_dae_button(trimeshes1)
         #detect_clashes(trimeshes1, trimeshes2, meshes1, meshes2)
 
 
