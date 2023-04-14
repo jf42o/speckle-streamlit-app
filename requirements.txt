@@ -7,3 +7,5 @@ streamlit-on-Hover-tabs
 plotly-express
 numpy
 trimesh
+pycollada
+scipy

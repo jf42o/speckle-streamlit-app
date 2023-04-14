@@ -15,10 +15,14 @@ import plotly.express as px
 from utils import *
 from plotly_charts import *
 import numpy as np
-
+from io import BytesIO
+import collada
+import scipy
+import trimesh
+from trimesh.collision import CollisionManager
 
 #toggle between local / redirection from speckleserver to app
-LOCAL = False
+LOCAL = True
 UPDATE = True
 
 def login():
@@ -369,7 +373,7 @@ def debug():
         st.set_page_config(page_title="SpeckleLit",layout="wide")
         col1, col2 = st.columns(2)
 
-        commit_url = "https://speckle.xyz/streams/89ad038e05/commits/a914527708"
+        commit_url = "https://speckle.xyz/streams/18308f4446/commits/ed51c74d56"
 
         def commit_url_to_speckle_url(commit_url):
             # Extract stream id and commit id from the commit url
@@ -394,13 +398,14 @@ def debug():
             commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
             obj_id = commit.referencedObject
             commit_data = operations.receive(obj_id, wrapper.get_transport())
-
-            categories = ["@Wände", "@Geschossdecken", "@Tragwerksstützen"]
-            params_to_search = ["IMP_Disziplin", "IMP_Bauteil", "IMP_Kranstatus", "IMP_Gewicht (kg)", "Volumen", "Länge", "Höhe", "Fläche" ]
+            
+            categories = ["@Walls", "@Floors", "@Stairs", "Walls", "Floors", "Stairs"]
+            params_to_search = ["IMP_Disziplin", "IMP_Bauteil", "IMP_Kranstatus", "IMP_Gewicht (kg)", "IMP_Kosten", "IMP_Kosten-calculated", "Volumen", "Länge", "Höhe", "Fläche" ]
 
             # Parse the model only if it's not already parsed
             if st.session_state['parsed_model_data'] is None:
                 st.session_state['parsed_model_data'] = parse_and_update_model(commit_data, categories, params_to_search)
+
 
             ##FUNCTION for generating speckle url
             def generate_speckle_url(commit_url, ids):
@@ -428,10 +433,11 @@ def debug():
             }
             
             
+            
             gb = GridOptionsBuilder.from_dataframe(st.session_state['parsed_model_data'])
             gb.configure_default_column(editable=True, groupable=True)
-            gb.configure_pagination(enabled=True)
-            gb.configure_selection(selection_mode="multiple", use_checkbox=True, groupSelectsChildren="Group checkbox select children")
+            gb.configure_pagination(enabled=True, paginationPageSize=25)
+            gb.configure_selection(selection_mode="multiple", use_checkbox=True)
             gb.configure_side_bar()
             gridoptions = gb.build()
 
@@ -478,7 +484,7 @@ def debug():
                
         with col2:
             #st.write(st.session_state["speckle_url"])
-            st.components.v1.iframe(src=st.session_state["speckle_url"],width=750,height=750)
+            st.components.v1.iframe(src=st.session_state["speckle_url"],width=800,height=800)
 
 
         ####
@@ -541,9 +547,27 @@ def debug():
         st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': True, 'scrollZoom': True, 'responsive': True, 'staticPlot': False})
     
 
-        ####trimesh#######
+        #####clash detection#######  
+        #setup second stream
+        commit_url = "https://speckle.xyz/streams/89ad038e05/commits/f38c46f84b"
 
-        parse_and_create_trimesh_meshes(commit_data, categories)
+        wrapper = StreamWrapper(commit_url)
+        client = wrapper.get_client()
+        account = get_default_account()
+        client.authenticate_with_account(account)
+
+        commit = client.commit.get(wrapper.stream_id, wrapper.commit_id)
+        obj_id = commit.referencedObject
+        commit_data2 = operations.receive(obj_id, wrapper.get_transport())
+
+        meshes1 = get_all_meshes(commit_data)
+        meshes2 = get_all_meshes(commit_data2)
+        trimeshes1 = speckle_meshes_to_trimesh(meshes1)
+        trimeshes2 = speckle_meshes_to_trimesh(meshes2)
+
+        #dae_file = download_dae_button(trimeshes1) 
+        #detect_clashes(trimeshes1, trimeshes2, meshes1, meshes2)
+
 
 
 debug()
