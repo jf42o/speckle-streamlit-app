@@ -75,7 +75,7 @@ def login():
             html_code = (f"""
                         <div class="container">
                             <button class="custom-login-button">
-                                <a href="{verify_url}" style="color: inherit; text-decoration: none;">
+                                <a target="_self" href="{verify_url}" style="color: inherit; text-decoration: none;">
                                     <img src="https://speckle.systems/content/images/2021/02/logo_big.png" alt="Speckle Logo">
                                     Login to Speckle
                                 </a>
