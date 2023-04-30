@@ -60,6 +60,7 @@ def login():
         st.session_state['refresh_token'] = None
     try:
         access_code = st.experimental_get_query_params()['access_code'][0]
+        access_code = st.experimental_set_query_params('access_code' = 100)
         st.session_state['access_code'] = access_code
     except:
         access_code = None
